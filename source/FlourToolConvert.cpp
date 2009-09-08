@@ -16,28 +16,17 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
     return os;
 }
 
-void read_line(NxOgre::Resource* resource, NxOgre::SharedStringStream stream)
+void read_line(NxOgre::Resource* resource, NxOgre::Buffer<char> buffer)
 {
- while(false)
+ buffer.clear();
+ while(1)
  {
-  std::cout << resource->readChar();
-  if (resource->at() == resource->getSize())
-   return;
- }
-/*
- line_length=0;
- while (resource->atEnd() == false) // || line_length < 2048)
- {
-  line[line_length] = resource->readChar();
-
-  std::cout << line[line_length];// << resource->atEnd();
-
-  if (line[line_length] == '\n')
+  char c = resource->readChar();
+  if (resource->atEnd() || c == '\r' || c == '\n')
    break;
-
-  line_length++;
+  buffer.append(c);
  }
- line[line_length + 1] = 0;*/
+ buffer.append(0);
 }
 
 std::string get_description(FlourConvert::ConversionType type)
@@ -196,12 +185,12 @@ void FlourConvert::convertCloth(const std::string&)
  std::cout << "cloth" << std::endl;
 }
 
-void FlourConvert::parseTextFile(const std::string& file, SimpleMesh&)
+void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
 {
  boost::filesystem::path pathname(file);
     std::string dirname  = pathname.parent_path().string();
     std::string basename = pathname.filename();
-
+ 
  
  if (dirname.size() == 0)
   dirname = ".";
@@ -220,14 +209,56 @@ void FlourConvert::parseTextFile(const std::string& file, SimpleMesh&)
  
  if (resource->getStatus() == NxOgre::Enums::ResourceStatus_Opened)
  {
-  //unsigned int i = resource->getSize();
-  std::cout << "At:" << resource->at() << std::endl;
-  std::cout << "End:" << resource->atEnd() << std::endl;
-  resource->seek(170 + 1);
-  std::cout << "At:" << resource->at() << std::endl;
-  std::cout << "End:" << resource->atEnd() << std::endl;
+  NxOgre::Buffer<char> buffer;
+  unsigned int line = 0;
+  while(1)
+  {
+   read_line(resource, buffer);
+   //std::cout << buffer.first() << std::endl;
+   line++;
+   if (buffer.size() == 0)
+    continue;
+   
+   if (buffer[0] == '#') // Skip full-line comments.
+    continue;
+   
+   // "Trim" down the string if it has comments. Basically adding a null-terminator where the comment starts.
+   for (unsigned int i=0; i < buffer.size(); i++)
+   {
+    if (buffer[i] == '#')
+     buffer[i] = 0;
+   }
 
+   if (boost::istarts_with(buffer.first(), "vertices"))
+   {
+    
+    std::string working_string(buffer.first() + 8);
+    
+    std::vector<std::string> float_strings;
+    boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+    if (float_strings.size() % 3 != 0)
+    {
+     std::cout << "[Warning] Vertices count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+     continue;
+    }
+    for (unsigned int i=0; i < float_strings.size(); i+=3)
+    {
+     NxOgre::Vec3 vec;
+     boost::trim(float_strings[i]);
+     boost::trim(float_strings[i+1]);
+     boost::trim(float_strings[i+2]);
+     vec.x = boost::lexical_cast<float, std::string>(float_strings[i]);
+     vec.y = boost::lexical_cast<float, std::string>(float_strings[i+1]);
+     vec.z = boost::lexical_cast<float, std::string>(float_strings[i+2]);
+     mesh.Vertices.insert(vec);
+     std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
+    }
+   }
 
+   if (resource->atEnd())
+    break;
+  }
+  
  }
  else
  {

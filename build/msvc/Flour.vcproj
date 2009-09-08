@@ -84,6 +84,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="mkdir &quot;$(SolutionDir)..\..\application&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(TargetDir)Flour.exe&quot; &quot;$(SolutionDir)..\..\application\&quot;"
 			/>
 		</Configuration>
 		<Configuration
