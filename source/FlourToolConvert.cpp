@@ -184,17 +184,6 @@ void FlourConvert::convertConvex(const std::string& file)
   return;
  }
 
-/*
- NxOgre::ManualMesh mesh;
- mesh.begin(NxOgre::Enums::MeshType_Convex, 12);
- mesh.vertex(1,1,1);
- mesh.vertex(1,0,1);
- mesh.vertex(3,1,1);
- mesh.vertex(1,1,3);
- mesh.vertex(1,4,1);
- mesh.vertex(1,-4,1);
- mesh.endCookOnly(true, NxOgre::ArchiveResourceIdentifier("internal-cwd:test.nxs"));
-*/
 }
 
 void FlourConvert::convertTriangle(const std::string&)
@@ -299,6 +288,95 @@ void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
      boost::trim(uint_strings[i]);
      unsigned int index = boost::lexical_cast<unsigned int, std::string>(uint_strings[i]);
      mesh.Indices.insert(index);
+    }
+    
+    continue;
+   }
+
+   if (boost::istarts_with(buffer.first(), "normals"))
+   {
+    
+    // normals
+    // 1234567
+    std::string working_string(buffer.first() + 7);
+    
+    std::vector<std::string> float_strings;
+    boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+    if (float_strings.size() % 3 != 0)
+    {
+     std::cout << "[Warning] Normal count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+     continue;
+    }
+    for (unsigned int i=0; i < float_strings.size(); i+=3)
+    {
+     NxOgre::Vec3 vec;
+     boost::trim(float_strings[i]);
+     boost::trim(float_strings[i+1]);
+     boost::trim(float_strings[i+2]);
+     vec.x = boost::lexical_cast<float, std::string>(float_strings[i]);
+     vec.y = boost::lexical_cast<float, std::string>(float_strings[i+1]);
+     vec.z = boost::lexical_cast<float, std::string>(float_strings[i+2]);
+     mesh.Normals.insert(vec);
+    }
+    
+    continue;
+   }
+
+   if (boost::istarts_with(buffer.first(), "texturecoords"))
+   {
+    
+    // texturecoords
+    // 1234567890123
+    std::string working_string(buffer.first() + 13);
+    
+    std::vector<std::string> float_strings;
+    boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+    if (float_strings.size() % 2 != 0)
+    {
+     std::cout << "[Warning] Texture Coordinate count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+     continue;
+    }
+    for (unsigned int i=0; i < float_strings.size(); i+=2)
+    {
+     NxOgre::Vec2 vec;
+     boost::trim(float_strings[i]);
+     boost::trim(float_strings[i+1]);
+     vec.x = boost::lexical_cast<float, std::string>(float_strings[i]);
+     vec.y = boost::lexical_cast<float, std::string>(float_strings[i+1]);
+     mesh.TextureCoords.insert(vec);
+    }
+    
+    continue;
+   }
+
+  if (boost::istarts_with(buffer.first(), "tetrahedra"))
+  {
+    
+    // tetrahedra
+    // 1234567890
+    std::string working_string(buffer.first() + 10);
+    
+    std::vector<std::string> float_strings;
+    boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+    if (float_strings.size() % 4 != 0)
+    {
+     std::cout << "[Warning] Texture Coordinate count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+     continue;
+    }
+    for (unsigned int i=0; i < float_strings.size(); i+=4)
+    {
+     NxOgre::Vec4 vec;
+     boost::trim(float_strings[i]);
+     boost::trim(float_strings[i+1]);
+     boost::trim(float_strings[i+2]);
+     boost::trim(float_strings[i+3]);
+
+     vec.w = boost::lexical_cast<float, std::string>(float_strings[i]);
+     vec.x = boost::lexical_cast<float, std::string>(float_strings[i+1]);
+     vec.y = boost::lexical_cast<float, std::string>(float_strings[i+2]);
+     vec.z = boost::lexical_cast<float, std::string>(float_strings[i+3]);
+
+     mesh.Tetrahedra.insert(vec);
     }
     
     continue;
