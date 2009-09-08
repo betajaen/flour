@@ -146,9 +146,11 @@ void FlourConvert::convertConvex(const std::string& file)
 
   // Indices
   if (mesh.Indices.size())
+  {
    for (unsigned int i=0;i < mesh.Indices.size();i++)
     mm.index(mesh.Indices[i]);
-
+   
+  }
   mm.endCookOnly(true, NxOgre::ArchiveResourceIdentifier(out_ari.c_str()));
  }
  else
@@ -232,6 +234,8 @@ void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
    if (boost::istarts_with(buffer.first(), "vertices"))
    {
     
+    // vertices
+    // 12345678
     std::string working_string(buffer.first() + 8);
     
     std::vector<std::string> float_strings;
@@ -251,8 +255,28 @@ void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
      vec.y = boost::lexical_cast<float, std::string>(float_strings[i+1]);
      vec.z = boost::lexical_cast<float, std::string>(float_strings[i+2]);
      mesh.Vertices.insert(vec);
-     std::cout << vec.x << "," << vec.y << "," << vec.z << std::endl;
     }
+    
+    continue;
+   }
+   
+   if (boost::istarts_with(buffer.first(), "indices") || boost::istarts_with(buffer.first(), "indexes"))
+   {
+    // indices indexes
+    // 1234567 1234567
+    std::string working_string(buffer.first() + 7);
+    
+    std::vector<std::string> uint_strings;
+    boost::algorithm::split(uint_strings, working_string, boost::is_any_of(","));
+    
+    for (unsigned int i=0; i < uint_strings.size(); i++)
+    {
+     boost::trim(uint_strings[i]);
+     unsigned int index = boost::lexical_cast<unsigned int, std::string>(uint_strings[i]);
+     mesh.Indices.insert(index);
+    }
+    
+    continue;
    }
 
    if (resource->atEnd())
