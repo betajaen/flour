@@ -64,11 +64,11 @@ h2. List of Properties
 
 |_.Property Name|_.Property Description|_.Property type|_.Restriction|
 |type|Type of mesh|String|'convex', 'triangle', 'cloth', 'softbody' or 'skeleton'|
-|vertices|Mesh Vertices| Real list |list count must be divisible by 3|
-|indices or indexes|Mesh Indices|Integer list|iteger list of indices|list count must be divisible by 3|
-|normals|Mesh normals|Real list|list count must be divisible by 3|
-|texturecoords|Mesh Texture coordinates|Real list|list count must be divisible by 2|
-|tetrahedra|Mesh tetrahedra|Real list|list count must be divisible by 4|
+|vertices|Vertices| Real list |list count must be divisible by 3|
+|indices or indexes|Indices|Integer list|list count must be divisible by 3|
+|normals|Vertex Normals|Real list|list count must be divisible by 3|
+|texturecoords|Texture coordinates|Real list|list count must be divisible by 2|
+|tetrahedra|Softbody tetrahedra|Real list|list count must be divisible by 4|
 
 h2. Example file
 
