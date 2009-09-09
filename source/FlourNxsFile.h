@@ -1,5 +1,5 @@
-/** File: FlourRegistry.cpp
-    Created on: 06-Sept-09
+/** File: FlourNxsFile.h
+    Created on: 09-Sept-09
     Author: Robin Southern "betajaen"
 
     Copyright (c) 2009 Robin Southern
@@ -23,31 +23,29 @@
     THE SOFTWARE.
 */
 
-#include "Flour.h"
+#ifndef FLOUR_NXS_FILE_H
+#define FLOUR_NXS_FILE_H
 
-// Tools of Flour
-#include "FlourToolVersion.h"
-#include "FlourToolConvert.h"
-#include "FlourToolFiles.h"
+#include "FlourFile.h"
 
-// Files of Flour
-#include "FlourTxtFile.h"
-#include "FlourNxsFile.h"
+#include "NxOgre.h"
+#include <string>
 
-void Flour::registerTools()
+class FlourNxsFile : public FlourFile
 {
- 
- registerTool("version", new FlourVersion());
- registerTool("files", new FlourFiles());
- 
- registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
- registerTool("triangle", new FlourConvert(FlourConvert::ConversionType_Triangle));
- registerTool("cloth", new FlourConvert(FlourConvert::ConversionType_Cloth));
- 
-}
+  
+ public:
+  
+                                      FlourNxsFile();
+  
+                                     ~FlourNxsFile();
+  
+  NxOgre::MeshData*                   loadMesh(const std::string& path);
+  
+  void                                saveMesh(const std::string& path, NxOgre::MeshData*);
+  
+ protected:
+  
+};
 
-void Flour::registerFiles()
-{
- registerFile(new FlourTxtFile());
- registerFile(new FlourNxsFile());
-}
+#endif

@@ -55,7 +55,7 @@ class Flour
   
   void fromString(const std::string&);
   
-  FlourTool* getTool(const std::string&);
+  FlourTool*  getTool(const std::string&);
   
   std::string getVersion() const;
   
@@ -65,13 +65,13 @@ class Flour
   
   void        initNxOgre();
   
- protected:
-  
-  static Flour*                                mFlourInstance;
-  
   std::map<std::string, FlourTool*>            mTools;
   
   std::map<std::string, FlourFile*>            mFiles;
+  
+ protected:
+  
+  static Flour*                                mFlourInstance;
   
   boost::program_options::variables_map        mVariablesMap;
   

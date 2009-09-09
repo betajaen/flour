@@ -33,7 +33,7 @@
 #include <boost/filesystem.hpp>
 
 FlourFile::FlourFile(const std::string& extension, const std::string& description, const std::string& opposite, FileType ft)
-: mExtension(extension), mDescription(description), mOpposite(opposite), mType(ft)
+: mExtension(extension), mDescription(description), mOpposite(opposite), mType(ft), mWorkingResource(0)
 {
 }
 
@@ -60,12 +60,12 @@ void FlourFile::saveHeightfield(const std::string& path, NxOgre::HeightFieldData
 {
 }
 
-void FlourFile::openResource(const std::string& file, NxOgre::Enums::ResourceAccess ra)
+void FlourFile::open(const std::string& file, bool open_resource, NxOgre::Enums::ResourceAccess ra)
 {
  
  boost::filesystem::path pathname(file);
  std::string dirname  = pathname.parent_path().string();
- std::string basename = pathname.filename();
+ mWorkingFileName = pathname.filename();
  
  if (dirname.size() == 0)
   dirname = ".";
@@ -75,17 +75,23 @@ void FlourFile::openResource(const std::string& file, NxOgre::Enums::ResourceAcc
 
  std::stringstream archive_name;
  archive_name << "flour_" << NxOgre::Functions::generateHash(dirname.c_str(), NxOgre::Enums::HashAlgorithm_DJB2);
- 
+ mWorkingArchiveName = archive_name.str();
+
+
  if (NxOgre::ResourceSystem::getSingleton()->getArchiveByName(archive_name.str().c_str()) == 0)
    NxOgre::ResourceSystem::getSingleton()->openArchive(archive_name.str().c_str(), NxOgre::UniformResourceIdentifier(uri.str().c_str()) );
  
  std::stringstream ari;
- ari << archive_name.str() << ":" << basename.c_str();
+ ari << mWorkingArchiveName << ":" << mWorkingFileName.c_str();
 
- mWorkingResource = NxOgre::ResourceSystem::getSingleton()->open(NxOgre::ArchiveResourceIdentifier(ari.str().c_str()), ra);
+ if (open_resource)
+  mWorkingResource = NxOgre::ResourceSystem::getSingleton()->open(NxOgre::ArchiveResourceIdentifier(ari.str().c_str()), ra);
+ else
+  mWorkingResource = 0;
 }
 
-void FlourFile::closeResource()
+void FlourFile::close()
 {
- mWorkingResource->getArchive()->close(mWorkingResource);
+ if (mWorkingResource)
+  mWorkingResource->getArchive()->close(mWorkingResource);
 }

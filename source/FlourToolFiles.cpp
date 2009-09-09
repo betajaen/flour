@@ -1,4 +1,4 @@
-/** File: FlourRegistry.cpp
+/** File: FlourToolFiles.cpp
     Created on: 06-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,31 +23,36 @@
     THE SOFTWARE.
 */
 
-#include "Flour.h"
-
-// Tools of Flour
-#include "FlourToolVersion.h"
-#include "FlourToolConvert.h"
 #include "FlourToolFiles.h"
+#include "Flour.h"
+#include "FlourFile.h"
 
-// Files of Flour
-#include "FlourTxtFile.h"
-#include "FlourNxsFile.h"
+#include <iostream>
 
-void Flour::registerTools()
+#include <NxOgre.h>
+
+
+FlourFiles::FlourFiles() : FlourTool("files", "Prints files readable and writable by flour")
 {
- 
- registerTool("version", new FlourVersion());
- registerTool("files", new FlourFiles());
- 
- registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
- registerTool("triangle", new FlourConvert(FlourConvert::ConversionType_Triangle));
- registerTool("cloth", new FlourConvert(FlourConvert::ConversionType_Cloth));
- 
 }
 
-void Flour::registerFiles()
+FlourFiles::~FlourFiles()
 {
- registerFile(new FlourTxtFile());
- registerFile(new FlourNxsFile());
+}
+
+void FlourFiles::process()
+{
+ Flour* flour = Flour::getInstance();
+ std::cout << "Flour can load and save the following file-formats: " << std::endl;
+ for (std::map<std::string, FlourFile*>::iterator it = flour->mFiles.begin(); it != flour->mFiles.end(); it++)
+ {
+  std::cout << " * " << (*it).first << " : " << (*it).second->getDescription() << std::endl;
+ }
+
+ std::cout << "Flour can perform the following conversions: " << std::endl;
+ for (std::map<std::string, FlourFile*>::iterator it = flour->mFiles.begin(); it != flour->mFiles.end(); it++)
+ {
+  std::cout << " * " << (*it).first << " to " << (*it).second->getOpposite() << std::endl;
+ }
+
 }

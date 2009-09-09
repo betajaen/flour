@@ -1,4 +1,4 @@
-/** File: FlourRegistry.cpp
+/** File: FlourToolVersion.h
     Created on: 06-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,31 +23,21 @@
     THE SOFTWARE.
 */
 
-#include "Flour.h"
+#ifndef FLOUR_TOOL_FILES_H
+#define FLOUR_TOOL_FILES_H
 
-// Tools of Flour
-#include "FlourToolVersion.h"
-#include "FlourToolConvert.h"
-#include "FlourToolFiles.h"
+#include "FlourTool.h"
 
-// Files of Flour
-#include "FlourTxtFile.h"
-#include "FlourNxsFile.h"
-
-void Flour::registerTools()
+class FlourFiles : public FlourTool
 {
- 
- registerTool("version", new FlourVersion());
- registerTool("files", new FlourFiles());
- 
- registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
- registerTool("triangle", new FlourConvert(FlourConvert::ConversionType_Triangle));
- registerTool("cloth", new FlourConvert(FlourConvert::ConversionType_Cloth));
- 
-}
+ public:
+  
+  FlourFiles();
+  
+ ~FlourFiles();
+  
+  void process();
+  
+};
 
-void Flour::registerFiles()
-{
- registerFile(new FlourTxtFile());
- registerFile(new FlourNxsFile());
-}
+#endif

@@ -163,13 +163,15 @@ void FlourConvert::process()
    mesh->mType = NxOgre::Enums::MeshType_Cloth;
   else
    mesh->mType = NxOgre::Enums::MeshType_Unknown;
-
-  std::string opposite = extension; // temp will be in_file->getOpposite();
-  std::string out_filename = "flour_test.txt"; // temp will be basename + opposite
-
+  
+  std::string opposite = in_file->getOpposite();
+  
+  std::string out_filename = pathname.filename();
+  boost::replace_last(out_filename, extension, opposite);
+  
   FlourFile* out_file = Flour::getInstance()->getFile(opposite);
   
-  out_file->saveMesh("flour_test.txt", mesh);
+  out_file->saveMesh(boost::filesystem::path(pathname.parent_path() / out_filename).string(), mesh);
   
   std::cout << "Saved " << file << " as " << out_filename << std::endl;
 

@@ -182,6 +182,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\source\FlourNxsFile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourNxsFile.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\FlourRegistry.cpp"
 			>
 		</File>
@@ -199,6 +207,14 @@
 		</File>
 		<File
 			RelativePath="..\..\source\FlourToolConvert.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolFiles.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolFiles.h"
 			>
 		</File>
 		<File

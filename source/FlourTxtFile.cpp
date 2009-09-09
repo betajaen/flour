@@ -42,11 +42,11 @@ FlourTxtFile::~FlourTxtFile()
 
 NxOgre::MeshData* FlourTxtFile::loadMesh(const std::string& path)
 {
- openResource(path, NxOgre::Enums::ResourceAccess_ReadOnly);
+ open(path, true, NxOgre::Enums::ResourceAccess_ReadOnly);
  
  if (mWorkingResource->getStatus() != NxOgre::Enums::ResourceStatus_Opened)
  {
-  closeResource();
+  close();
   return 0;
  }
  
@@ -161,7 +161,7 @@ NxOgre::MeshData* FlourTxtFile::loadMesh(const std::string& path)
 
  } // end-while
  
- closeResource();
+ close();
  return mesh;
  
 }
@@ -171,7 +171,7 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
  if (data == 0)
   return;
 
- openResource(path, NxOgre::Enums::ResourceAccess_WriteOnly);
+ open(path, true, NxOgre::Enums::ResourceAccess_WriteOnly);
  
  NxOgre::SharedStringStream line;
  
@@ -189,6 +189,14 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
  writeLine(line);
  
  // Vertices.
+ if (data->mVertices.size())
+ {
+  std::stringstream ss;
+  ss << "\n# " << data->mVertices.size() / 3 << " Vertices";
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
  for (unsigned int i=0; i < data->mVertices.size(); i+=3)
  {
   std::stringstream ss;
@@ -199,6 +207,14 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
  }
  
  // Indices.
+ if (data->mIndexes.size())
+ {
+  std::stringstream ss;
+  ss << "\n# " << data->mIndexes.size() << " Indices / " << data->mIndexes.size() / 3 << " Triangles";
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
  for (unsigned int i=0; i < data->mIndexes.size(); i+=3)
  {
   std::stringstream ss;
@@ -207,8 +223,17 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
   line.add(ss.str().c_str());
   writeLine(line);
  }
-  
+
+
  // Normals.
+ if (data->mNormals.size())
+ {
+  std::stringstream ss;
+  ss << "\n# " << data->mNormals.size() / 3 << " Normals";
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
  for (unsigned int i=0; i < data->mNormals.size(); i+=3)
  {
   std::stringstream ss;
@@ -217,8 +242,19 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
   line.add(ss.str().c_str());
   writeLine(line);
  }
+
+
+
   
  // TextureCoords.
+ if (data->mTextureCoordinates.size())
+ {
+  std::stringstream ss;
+  ss << "# " << data->mTextureCoordinates.size() / 2<< " TextureCoords";
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
  for (unsigned int i=0; i < data->mNormals.size(); i+=2)
  {
   std::stringstream ss;
@@ -228,16 +264,7 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
   writeLine(line);
  }
  
- closeResource();
-}
-
-NxOgre::ManualHeightField* FlourTxtFile::loadHeightfield(const std::string& path)
-{
- return 0;
-}
-
-void FlourTxtFile::saveHeightfield(const std::string& path, NxOgre::HeightFieldData*)
-{
+ close();
 }
 
 void FlourTxtFile::getLine(NxOgre::Buffer<char>& buffer)

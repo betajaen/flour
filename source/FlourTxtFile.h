@@ -44,10 +44,6 @@ class FlourTxtFile : public FlourFile
   
   void                                saveMesh(const std::string& path, NxOgre::MeshData*);
   
-  NxOgre::ManualHeightField*          loadHeightfield(const std::string& path);
-  
-  void                                saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
-  
  protected:
   
   void                                writeLine(NxOgre::SharedStringStream&);
