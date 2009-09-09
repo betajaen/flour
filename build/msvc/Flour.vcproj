@@ -170,6 +170,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\flour.rc"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\FlourApp.cpp"
 			>
 		</File>
@@ -235,6 +239,10 @@
 		</File>
 		<File
 			RelativePath="..\..\source\FlourTXTSchema.textile"
+			>
+		</File>
+		<File
+			RelativePath=".\resource.h"
 			>
 		</File>
 	</Files>
