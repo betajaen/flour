@@ -1,5 +1,5 @@
-/** File: FlourRegistry.cpp
-    Created on: 06-Sept-09
+/** File: FlourTxtFile.h
+    Created on: 09-Sept-09
     Author: Robin Southern "betajaen"
 
     Copyright (c) 2009 Robin Southern
@@ -23,24 +23,31 @@
     THE SOFTWARE.
 */
 
-#include "Flour.h"
+#ifndef FLOUR_TXT_FILE_H
+#define FLOUR_TXT_FILE_H
 
-// Tools of Flour
-#include "FlourToolVersion.h"
-#include "FlourToolConvert.h"
+#include "FlourFile.h"
 
-// Files of Flour
-#include "FlourFileTxt.h"
+#include "NxOgre.h"
+#include <string>
 
-void Flour::registerTools()
+class FlourTxtFile : public FlourFile
 {
- registerTool("version", new FlourVersion());
- registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
-}
+  
+ public:
+  
+                                      FlourTxtFile();
+  
+                                     ~FlourTxtFile();
+  
+  NxOgre::MeshData*                   loadMesh(const std::string& path);
+  
+  void                                saveMesh(const std::string& path, NxOgre::MeshData*);
+  
+  NxOgre::ManualHeightField*          loadHeightfield(const std::string& path);
+  
+  void                                saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
+  
+};
 
-void Flour::registerFiles()
-{
- registerFile(new FlourTxtFile());
-// registerFile(new FileNXS());
-// registerFile(new FileTXT());
-}
+#endif

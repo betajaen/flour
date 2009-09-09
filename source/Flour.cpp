@@ -25,6 +25,7 @@
 
 #include "Flour.h"
 #include "FlourTool.h"
+#include "FlourFile.h"
 
 #include <iostream>
 #include <boost/program_options.hpp> 
@@ -135,6 +136,13 @@ FlourTool* Flour::getTool(const std::string& name)
  if (it == mTools.end())
   return 0;
  return (*it).second;
+}
+
+void Flour::registerFile(FlourFile* file)
+{
+ std::string ext = file->getExtension();
+ boost::to_lower(ext);
+ mFiles[ext] = file;
 }
 
 void Flour::initNxOgre()

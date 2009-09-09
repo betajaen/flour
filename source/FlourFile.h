@@ -1,4 +1,4 @@
-/** File: Flour.h
+/** File: FlourFile.h
     Created on: 06-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,59 +23,52 @@
     THE SOFTWARE.
 */
 
-#ifndef FLOUR_H
-#define FLOUR_H
+#ifndef FLOUR_FILE_H
+#define FLOUR_FILE_H
 
 #include "NxOgre.h"
 #include <string>
-#include <boost/program_options.hpp> 
 
-class FlourTool;
-class FlourFile;
-
-class Flour
+class FlourFile
 {
+  
  public:
   
-  Flour();
+  enum FileType
+  {
+   FileType_Mesh,
+   FileType_Heightfield
+  };
   
- ~Flour();
+                                      FlourFile(const std::string& extension, const std::string& description, const std::string& opposite, FileType);
   
-  static Flour* getInstance();
+  virtual                            ~FlourFile();
   
-  void registerTools();
-  
-  void registerTool(const std::string& name, FlourTool*);
+  std::string                         getOpposite() const { return mOpposite; }
 
-  void registerFiles();
+  std::string                         getExtension() const { return mExtension; }
   
-  void registerFile(FlourFile*);
+  std::string                         getDescription() const { return mDescription; }
   
-  void fromCommandLine(int argc, char** argv);
+  FileType                            getType() const { return mType; }
+
+  virtual NxOgre::MeshData*           loadMesh(const std::string& path);
   
-  void fromString(const std::string&);
+  virtual void                        saveMesh(const std::string& path, NxOgre::MeshData*);
   
-  FlourTool* getTool(const std::string&);
+  virtual NxOgre::ManualHeightField*  loadHeightfield(const std::string& path);
   
-  std::string getVersion() const;
-  
-  std::string getTools();
-  
-  void        initNxOgre();
+  virtual void                        saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
   
  protected:
   
-  static Flour*                                mFlourInstance;
+  std::string                                             mExtension;
   
-  std::map<std::string, FlourTool*>            mTools;
+  std::string                                             mDescription;
   
-  std::map<std::string, FlourFile*>            mFiles;
+  std::string                                             mOpposite;
   
-  boost::program_options::variables_map        mVariablesMap;
-  
-  boost::program_options::options_description  mOptionsDescription;
-  
-  NxOgre::World*                               mWorld;
+  FileType                                                mType;
   
 };
 

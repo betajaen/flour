@@ -29,14 +29,7 @@
 #include "FlourTool.h"
 #include "NxOgre.h"
 
-struct SimpleMesh
-{
- NxOgre::Array<NxOgre::Vec3>  Vertices;
- NxOgre::Array<NxOgre::Vec3>  Normals;
- NxOgre::Array<unsigned int>  Indices;
- NxOgre::Array<NxOgre::Vec2>  TextureCoords;
- NxOgre::Array<NxOgre::Vec4>  Tetrahedra;
-};
+
 
 class FlourConvert : public FlourTool
 {
@@ -69,8 +62,6 @@ class FlourConvert : public FlourTool
   void convertHeightfield(const std::string&);
   
   void convertCloth(const std::string&);
-  
-  void parseTextFile(const std::string& file, SimpleMesh&);
 
  protected:
   

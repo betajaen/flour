@@ -132,29 +132,43 @@ void FlourConvert::process()
   return;
  }
  
+ 
  std::vector<std::string> files = mVariablesMap["file"].as<std::vector<std::string>>();
  
  for (unsigned int i=0; i < files.size(); i++)
  {
-  if (mConversionType == ConversionType_Convex)
-   convertConvex(files[i]);
-  else if (mConversionType == ConversionType_Triangle)
-   convertTriangle(files[i]);
-  else if (mConversionType == ConversionType_Heightfield)
-   convertHeightfield(files[i]);
-  else if (mConversionType == ConversionType_Cloth)
-   convertCloth(files[i]);
+  std::string file = files[i];
+  boost::filesystem::path pathname(file);
+  std::string extension = pathname.extension();
+  
+  //std::string extension = pathname.ex    
+ 
+/*
+    if (mConversionType == ConversionType_Convex)
+     convertConvex(file);
+    else if (mConversionType == ConversionType_Triangle)
+     convertTriangle(file);
+    else if (mConversionType == ConversionType_Heightfield)
+     convertHeightfield(file);
+    else if (mConversionType == ConversionType_Cloth)
+     convertCloth(file);
+
+*/
  }
+  
 }
 
 
 void FlourConvert::convertConvex(const std::string& file)
 {
-
+#if 0
  Flour::getInstance()->initNxOgre();
 
  NxOgre::String out_ari("internal-cwd:flour_out.nxs"); 
  SimpleMesh mesh;
+
+ boost::filesystem::path pathname(file);
+ std::string extension = pathname.extension();
 
  if (boost::iends_with(file, ".txt"))
   parseTextFile(file, mesh);
@@ -183,7 +197,7 @@ void FlourConvert::convertConvex(const std::string& file)
   error(1001, true);
   return;
  }
-
+#endif
 }
 
 void FlourConvert::convertTriangle(const std::string&)
@@ -201,11 +215,13 @@ void FlourConvert::convertCloth(const std::string&)
  std::cout << "cloth" << std::endl;
 }
 
+#if 0
 void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
 {
+ 
  boost::filesystem::path pathname(file);
-    std::string dirname  = pathname.parent_path().string();
-    std::string basename = pathname.filename();
+ std::string dirname  = pathname.parent_path().string();
+ std::string basename = pathname.filename();
  
  
  if (dirname.size() == 0)
@@ -399,3 +415,6 @@ void FlourConvert::parseTextFile(const std::string& file, SimpleMesh& mesh)
  // Close the archive.
  NxOgre::ResourceSystem::getSingleton()->closeArchive("flour_textfile_working");
 }
+
+
+#endif
