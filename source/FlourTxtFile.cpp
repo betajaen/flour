@@ -25,9 +25,13 @@
 
 #include "FlourTxtFile.h"
 
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <vector>
 
 FlourTxtFile::FlourTxtFile()
-: FlourFile("txt", "Flour text file for meshes", "nxs", FlourFile::FileType_Mesh)
+: FlourFile(".txt", "Flour text file for meshes", ".nxs", FlourFile::FileType_Mesh)
 {
 }
 
@@ -38,11 +42,193 @@ FlourTxtFile::~FlourTxtFile()
 
 NxOgre::MeshData* FlourTxtFile::loadMesh(const std::string& path)
 {
- return 0;
+ openResource(path, NxOgre::Enums::ResourceAccess_ReadOnly);
+ 
+ if (mWorkingResource->getStatus() != NxOgre::Enums::ResourceStatus_Opened)
+ {
+  closeResource();
+  return 0;
+ }
+ 
+ NxOgre::MeshData* mesh = NxOgre_New(NxOgre::MeshData)();
+ 
+ NxOgre::Buffer<char> buffer;
+ unsigned int line = 0;
+ while(1)
+ {
+  getLine(buffer);
+  line++;
+  if (buffer.size() == 0) // Skip empty lines.
+   continue;
+  if (buffer[0] == '#') // Skip full comment lines.
+   continue;
+  
+  // Cut off any inline-comments.
+  for (unsigned int i=0; i < buffer.size();i++)
+   if (buffer[i] == '#')
+    buffer[i] = 0;
+  
+  if (boost::istarts_with(buffer.first(), "vertices"))
+  {
+   // vertices
+    // 12345678
+    std::string working_string(buffer.first() + 8);
+    
+    std::vector<std::string> float_strings;
+    boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+    if (float_strings.size() % 3 != 0)
+    {
+     std::cout << "[Warning] Vertices count at line " << line << " is incorrect. Should be divisible by 3! Line is ignored." << std::endl;
+     continue;
+    }
+    for (unsigned int i=0; i < float_strings.size(); i++)
+    {
+     boost::trim(float_strings[i]);
+     mesh->mVertices.append(boost::lexical_cast<float, std::string>(float_strings[i]));
+    }
+    
+    continue;
+  }
+  
+  if (boost::istarts_with(buffer.first(), "indices") || boost::istarts_with(buffer.first(), "indexes"))
+  {
+   // indices indexes
+   // 1234567 1234567
+   std::string working_string(buffer.first() + 7);
+   
+   std::vector<std::string> uint_strings;
+   boost::algorithm::split(uint_strings, working_string, boost::is_any_of(","));
+   
+   for (unsigned int i=0; i < uint_strings.size(); i++)
+   {
+    boost::trim(uint_strings[i]);
+    unsigned int index = boost::lexical_cast<unsigned int, std::string>(uint_strings[i]);
+    mesh->mIndexes.append(index);
+   }
+   
+   continue;
+  }
+  
+  if (boost::istarts_with(buffer.first(), "normals"))
+  {
+   
+   // normals
+   // 1234567
+   std::string working_string(buffer.first() + 7);
+   
+   std::vector<std::string> float_strings;
+   boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+   if (float_strings.size() % 3 != 0)
+   {
+    std::cout << "[Warning] Normal count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+    continue;
+   }
+    for (unsigned int i=0; i < float_strings.size(); i++)
+    {
+     boost::trim(float_strings[i]);
+     mesh->mNormals.append(boost::lexical_cast<float, std::string>(float_strings[i]));
+    }
+
+   continue;
+  }
+
+  if (boost::istarts_with(buffer.first(), "texturecoords"))
+  {
+   
+   // texturecoords
+   // 1234567890123
+   std::string working_string(buffer.first() + 13);
+   
+   std::vector<std::string> float_strings;
+   boost::algorithm::split(float_strings, working_string, boost::is_any_of(","));
+   if (float_strings.size() % 2 != 0)
+   {
+    std::cout << "[Warning] Texture Coordinate count at line " << line << " is incorrect. Should be divisible by 3!" << std::endl;
+    continue;
+   }
+   
+   for (unsigned int i=0; i < float_strings.size(); i++)
+   {
+    boost::trim(float_strings[i]);
+    mesh->mTextureCoordinates.append(boost::lexical_cast<float, std::string>(float_strings[i]));
+   }
+   
+   continue;
+  }
+  
+  if (mWorkingResource->atEnd())
+   break;
+
+ } // end-while
+ 
+ closeResource();
+ return mesh;
+ 
 }
 
-void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData*)
+void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
 {
+ if (data == 0)
+  return;
+
+ openResource(path, NxOgre::Enums::ResourceAccess_WriteOnly);
+ 
+ NxOgre::SharedStringStream line;
+ 
+ // Write type;
+ line << "type ";
+ if (data->mType == NxOgre::Enums::MeshType_Convex)
+  line << "convex";
+ else if (data->mType == NxOgre::Enums::MeshType_Triangle)
+  line << "triangle";
+ else if (data->mType == NxOgre::Enums::MeshType_SoftBody)
+  line << "softbody";
+ else if (data->mType == NxOgre::Enums::MeshType_Cloth)
+  line << "cloth";
+ 
+ writeLine(line);
+ 
+ // Vertices.
+ for (unsigned int i=0; i < data->mVertices.size(); i+=3)
+ {
+  std::stringstream ss;
+  ss << "vertices " << data->mVertices[i] << ", " << data->mVertices[i+1] << ", " << data->mVertices[i+2];
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
+ 
+ // Indices.
+ for (unsigned int i=0; i < data->mIndexes.size(); i+=3)
+ {
+  std::stringstream ss;
+  ss << "indexes " << data->mIndexes[i] << ", " << data->mIndexes[i+1] << ", " << data->mIndexes[i+2];
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
+  
+ // Normals.
+ for (unsigned int i=0; i < data->mNormals.size(); i+=3)
+ {
+  std::stringstream ss;
+  ss << "normals " << data->mNormals[i] << ", " << data->mNormals[i+1] << ", " << data->mNormals[i+2];
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
+  
+ // TextureCoords.
+ for (unsigned int i=0; i < data->mNormals.size(); i+=2)
+ {
+  std::stringstream ss;
+  ss << "texturecoords " << data->mTextureCoordinates[i] << ", " << data->mTextureCoordinates[i+1];
+  line.clear();
+  line.add(ss.str().c_str());
+  writeLine(line);
+ }
+ 
+ closeResource();
 }
 
 NxOgre::ManualHeightField* FlourTxtFile::loadHeightfield(const std::string& path)
@@ -54,3 +240,22 @@ void FlourTxtFile::saveHeightfield(const std::string& path, NxOgre::HeightFieldD
 {
 }
 
+void FlourTxtFile::getLine(NxOgre::Buffer<char>& buffer)
+{
+ buffer.clear();
+ while(1)
+ {
+  char c = mWorkingResource->readChar();
+  if (mWorkingResource->atEnd() || c == '\r' || c == '\n')
+   break;
+  buffer.append(c);
+ }
+ buffer.append(0);
+}
+
+void FlourTxtFile::writeLine(NxOgre::SharedStringStream& line)
+{
+ mWorkingResource->write(line.get(), line.length());
+ mWorkingResource->writeChar('\n');
+ line.clear();
+}

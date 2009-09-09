@@ -57,7 +57,6 @@ p. Depending on the mesh some properties may be ommitted.
 * Convex: Vertices, Indices(Optional)
 * Triangle: Vertices, Indices, Normals (Optional)
 * Cloth: Vertices, Indices, Normals (Optional), TextureCoords(Optional)
-* Softbody: Vertices, Indices, Tetrahedra, Normals (Optional), TextureCoords(Optional)
 * Skeleton: Vertices, Indices(Optional)
 
 h2. List of Properties 
@@ -68,7 +67,6 @@ h2. List of Properties
 |indices or indexes|Indices|Integer list|list count must be divisible by 3|
 |normals|Vertex Normals|Real list|list count must be divisible by 3|
 |texturecoords|Texture coordinates|Real list|list count must be divisible by 2|
-|tetrahedra|Softbody tetrahedra|Real list|list count must be divisible by 4|
 
 h2. Example file
 
@@ -84,5 +82,10 @@ vertices 100.0,-100.0,100.0     #6
 vertices -100.0,-100.0,100.0    #7
 
 indexes 0,2,3 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7,3, 2,6,7
+
+
+h2. Future
+
+* Support for Tetrahedra and SoftBodies.
 
 p. END. Last modified; 09-Sept-2009, Robin Southern

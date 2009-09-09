@@ -48,6 +48,12 @@ class FlourTxtFile : public FlourFile
   
   void                                saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
   
+ protected:
+  
+  void                                writeLine(NxOgre::SharedStringStream&);
+
+  void                                getLine(NxOgre::Buffer<char>& buffer);
+  
 };
 
 #endif

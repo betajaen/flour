@@ -38,7 +38,8 @@ class FlourConvert : public FlourTool
   enum Errors
   {
    ERROR_NoFile = 1000,
-   ERROR_NoMeshData = 1001,
+   ERROR_NoMeshData,
+   ERROR_UnrecongisedFileformat
   };
   
   enum ConversionType

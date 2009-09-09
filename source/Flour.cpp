@@ -40,11 +40,18 @@ Flour::Flour()
  mFlourInstance = this;
  
  registerTools();
+ registerFiles();
  
 }
 
 Flour::~Flour()
 {
+ for (std::map<std::string, FlourFile*>::iterator it = mFiles.begin(); it != mFiles.end(); it++)
+  delete (*it).second;
+
+ for (std::map<std::string, FlourTool*>::iterator it = mTools.begin(); it != mTools.end(); it++)
+  delete (*it).second;
+
  if (mWorld)
   NxOgre::World::destroyWorld();
 }
@@ -134,6 +141,16 @@ FlourTool* Flour::getTool(const std::string& name)
  boost::to_lower(tool_name);
  std::map<std::string, FlourTool*>::iterator it = mTools.find(tool_name);
  if (it == mTools.end())
+  return 0;
+ return (*it).second;
+}
+
+FlourFile* Flour::getFile(const std::string& ext)
+{
+ std::string ext_name = ext;
+ boost::to_lower(ext_name);
+ std::map<std::string, FlourFile*>::iterator it = mFiles.find(ext_name);
+ if (it == mFiles.end())
   return 0;
  return (*it).second;
 }

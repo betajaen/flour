@@ -25,17 +25,14 @@
 
 #include "FlourToolConvert.h"
 #include "Flour.h"
-
-#include <iostream>
-#include <fstream>
-#include <iterator>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include "FlourFile.h"
 
 #include <NxOgre.h>
 
-template<class T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
+template<class T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 {
     std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, "\n")); 
     return os;
@@ -88,6 +85,7 @@ FlourConvert::FlourConvert(ConversionType type)
  
  add_error(ERROR_NoFile, "Need at least one file.");
  add_error(ERROR_NoMeshData, "File contains no mesh data.");
+ add_error(ERROR_UnrecongisedFileformat, "Unrecongised file format.");
 
  if (mConversionType == ConversionType_Triangle)
  {
@@ -132,28 +130,51 @@ void FlourConvert::process()
   return;
  }
  
+ Flour::getInstance()->initNxOgre();
  
  std::vector<std::string> files = mVariablesMap["file"].as<std::vector<std::string>>();
  
  for (unsigned int i=0; i < files.size(); i++)
  {
+  
   std::string file = files[i];
   boost::filesystem::path pathname(file);
   std::string extension = pathname.extension();
   
-  //std::string extension = pathname.ex    
- 
-/*
-    if (mConversionType == ConversionType_Convex)
-     convertConvex(file);
-    else if (mConversionType == ConversionType_Triangle)
-     convertTriangle(file);
-    else if (mConversionType == ConversionType_Heightfield)
-     convertHeightfield(file);
-    else if (mConversionType == ConversionType_Cloth)
-     convertCloth(file);
+  FlourFile* in_file = Flour::getInstance()->getFile(extension);
+  if (in_file == 0)
+  {
+   error(ERROR_UnrecongisedFileformat, true);
+   return;
+  }
+  
+  NxOgre::MeshData* mesh = in_file->loadMesh(file);
+  if (mesh == 0)
+  {
+   error(ERROR_NoMeshData, true);
+   return;
+  }
 
-*/
+  if (mConversionType == ConversionType_Convex)
+   mesh->mType = NxOgre::Enums::MeshType_Convex;
+  else if (mConversionType == ConversionType_Triangle)
+   mesh->mType = NxOgre::Enums::MeshType_Triangle;
+  else if (mConversionType == ConversionType_Cloth)
+   mesh->mType = NxOgre::Enums::MeshType_Cloth;
+  else
+   mesh->mType = NxOgre::Enums::MeshType_Unknown;
+
+  std::string opposite = extension; // temp will be in_file->getOpposite();
+  std::string out_filename = "flour_test.txt"; // temp will be basename + opposite
+
+  FlourFile* out_file = Flour::getInstance()->getFile(opposite);
+  
+  out_file->saveMesh("flour_test.txt", mesh);
+  
+  std::cout << "Saved " << file << " as " << out_filename << std::endl;
+
+  NxOgre_Delete(mesh);
+  
  }
   
 }

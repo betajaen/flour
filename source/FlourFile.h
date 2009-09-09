@@ -60,6 +60,10 @@ class FlourFile
   
   virtual void                        saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
   
+  void                                openResource(const std::string& path, NxOgre::Enums::ResourceAccess);
+  
+  void                                closeResource();
+  
  protected:
   
   std::string                                             mExtension;
@@ -69,6 +73,8 @@ class FlourFile
   std::string                                             mOpposite;
   
   FileType                                                mType;
+  
+  NxOgre::Resource*                                       mWorkingResource;
   
 };
 

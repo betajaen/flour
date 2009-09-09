@@ -30,7 +30,7 @@
 #include "FlourToolConvert.h"
 
 // Files of Flour
-#include "FlourFileTxt.h"
+#include "FlourTxtFile.h"
 
 void Flour::registerTools()
 {

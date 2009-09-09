@@ -26,6 +26,12 @@
 #include "FlourFile.h"
 
 
+#include <iostream>
+#include <sstream>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
 FlourFile::FlourFile(const std::string& extension, const std::string& description, const std::string& opposite, FileType ft)
 : mExtension(extension), mDescription(description), mOpposite(opposite), mType(ft)
 {
@@ -54,3 +60,32 @@ void FlourFile::saveHeightfield(const std::string& path, NxOgre::HeightFieldData
 {
 }
 
+void FlourFile::openResource(const std::string& file, NxOgre::Enums::ResourceAccess ra)
+{
+ 
+ boost::filesystem::path pathname(file);
+ std::string dirname  = pathname.parent_path().string();
+ std::string basename = pathname.filename();
+ 
+ if (dirname.size() == 0)
+  dirname = ".";
+
+ std::stringstream uri;
+ uri << "file:" << dirname;
+
+ std::stringstream archive_name;
+ archive_name << "flour_" << NxOgre::Functions::generateHash(dirname.c_str(), NxOgre::Enums::HashAlgorithm_DJB2);
+ 
+ if (NxOgre::ResourceSystem::getSingleton()->getArchiveByName(archive_name.str().c_str()) == 0)
+   NxOgre::ResourceSystem::getSingleton()->openArchive(archive_name.str().c_str(), NxOgre::UniformResourceIdentifier(uri.str().c_str()) );
+ 
+ std::stringstream ari;
+ ari << archive_name.str() << ":" << basename.c_str();
+
+ mWorkingResource = NxOgre::ResourceSystem::getSingleton()->open(NxOgre::ArchiveResourceIdentifier(ari.str().c_str()), ra);
+}
+
+void FlourFile::closeResource()
+{
+ mWorkingResource->getArchive()->close(mWorkingResource);
+}

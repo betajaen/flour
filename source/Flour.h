@@ -61,6 +61,8 @@ class Flour
   
   std::string getTools();
   
+  FlourFile*  getFile(const std::string&);
+  
   void        initNxOgre();
   
  protected:
