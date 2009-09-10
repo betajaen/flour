@@ -261,6 +261,14 @@
 			RelativePath="..\..\source\FlourToolVersion.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\source\FlourToolViewer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolViewer.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -4,7 +4,7 @@
 Name: 'Flour (.flower)...'
 Blender: 249
 Group: 'Export'
-Tooltip: 'Export to Flour readable format (.flower)'
+Tooltip: 'Export to Flour readable format (.flower).'
 """
 
 __author__ = "Robin Southern"
@@ -17,8 +17,8 @@ Flour Exporter
 This script Exports a flower file that is readable by Flour
 """
 
-# File: flower_blender_exporter.py
-# Created on: 10-Sept-09
+# File: FlourApp.cpp
+# Created on: 06-Sept-09
 # Author: Robin Southern "betajaen"
 #
 # Copyright (c) 2009 Robin Southern
@@ -61,11 +61,10 @@ def write_flower(filepath):
   for vert in mesh.verts:
     out.write( 'vertices %f, %f, %f \n' % (vert.co.x, vert.co.y, vert.co.z) )
   
-  out.write('\n# Indices %i\n' % len(mesh.faces) * 6)
+  out.write('\n# Indices %i\n' % (len(mesh.faces) * 6))
   for f in mesh.faces:
-    
     if (len(f) == 3):
-      out.write('indices %i, %i, %i \n', f.v[0], f.v[1], f.v[2])
+      out.write('indices %i, %i, %i \n' % (f.v[0].index, f.v[1].index, f.v[2].index))
     elif (len(f) == 4):
       if (vec_length(f.v[2].co, f.v[0].co) < vec_length(f.v[3].co, f.v[1].co)):
         out.write('indices %i, %i, %i,  %i, %i, %i\n' % (f.v[0].index, f.v[1].index, f.v[2].index,    f.v[0].index, f.v[2].index, f.v[3].index) )
@@ -73,7 +72,7 @@ def write_flower(filepath):
         out.write('indices %i, %i, %i,  %i, %i, %i\n' % (f.v[0].index, f.v[1].index, f.v[3].index,    f.v[1].index, f.v[2].index, f.v[3].index) )
     else:
       out.write('# Eh?\n')
-  
+
   out.close()
-  
+
 Blender.Window.FileSelector(write_flower, "Export", Blender.sys.makename(ext='.flower'))

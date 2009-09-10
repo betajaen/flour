@@ -24,10 +24,11 @@
 */
 
 #include "Flour.h"
-
+#include <iostream>
 int main(int argc, char **argv) 
 {
  Flour* flour = new Flour();
  flour->fromCommandLine(argc, argv);
  delete flour;
+ std::cout << "Flour Died" << std::endl;
 }

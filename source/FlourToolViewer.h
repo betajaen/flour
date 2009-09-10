@@ -1,5 +1,5 @@
-/** File: FlourRegistry.cpp
-    Created on: 06-Sept-09
+/** File: FlourToolViewer.h
+    Created on: 10-Sept-09
     Author: Robin Southern "betajaen"
 
     Copyright (c) 2009 Robin Southern
@@ -23,31 +23,47 @@
     THE SOFTWARE.
 */
 
-#include "Flour.h"
+#ifndef FLOUR_TOOL_VIEWER_H
+#define FLOUR_TOOL_VIEWER_H
 
-// Tools of Flour
-#include "FlourToolVersion.h"
-#include "FlourToolConvert.h"
-#include "FlourToolFiles.h"
-#include "FlourToolViewer.h"
-// Files of Flour
-#include "FlourFlowerFile.h"
-#include "FlourNxsFile.h"
+#include "FlourTool.h"
+#include "NxOgre.h"
 
-void Flour::registerTools()
+
+class FlourViewer : public FlourTool
 {
- 
- registerTool("version", new FlourVersion());
- registerTool("files", new FlourFiles());
- registerTool("viewer", new FlourViewer());
- registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
- registerTool("triangle", new FlourConvert(FlourConvert::ConversionType_Triangle));
- registerTool("cloth", new FlourConvert(FlourConvert::ConversionType_Cloth));
- 
-}
+ public:
+  
+  enum Errors
+  {
+   ERROR_NoFile = 1000,
+   ERROR_NoMeshData,
+   ERROR_UnrecongisedFileformat
+  };
+  
+  FlourViewer();
+  
+ ~FlourViewer();
+  
+  void process();
 
-void Flour::registerFiles()
-{
- registerFile(new FlourFlowerFile());
- registerFile(new FlourNxsFile());
-}
+  void renderFrame();
+  
+ protected:
+  
+  void                createWindow(const std::string& caption);
+  
+  void                createMesh(const std::string& meshName);
+  
+  NxOgre::World*      mWorld;
+  
+  int                 mWindowHandle;
+  
+  NxOgre::Vec3        mCamera;
+  NxOgre::Vec3        mCameraTarget;
+  
+  std::vector<NxOgre::MeshData*> mMeshes;
+  float               mRotAngle;
+};
+
+#endif

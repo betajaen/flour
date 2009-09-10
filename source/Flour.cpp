@@ -46,14 +46,16 @@ Flour::Flour()
 
 Flour::~Flour()
 {
+ 
  for (std::map<std::string, FlourFile*>::iterator it = mFiles.begin(); it != mFiles.end(); it++)
   delete (*it).second;
-
+ 
  for (std::map<std::string, FlourTool*>::iterator it = mTools.begin(); it != mTools.end(); it++)
   delete (*it).second;
-
+ 
  if (mWorld)
   NxOgre::World::destroyWorld();
+ 
 }
 
 Flour* Flour::getInstance()
