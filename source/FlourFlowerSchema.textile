@@ -2,11 +2,11 @@ h1. Flower Text File Schema
 
 h2. Abstract
 
-p. This document describes the file structure and allowed properties of the txt file format for Flour.
+p. This document describes the file structure and allowed properties of the Flower file format for Flour.
 
 h2. Layout
 
-p. Each file is text based and can be edited by a normal text editor. Encoding is a non-issue as each command and property uses characters from the lower half of the standard ASCII character set.
+p. Each file is text based and can be edited by a normal text editor. Encoding is a non-issue as each command and property uses characters from the lower half of the standard ASCII character set. A flower file has the file extension @.flower@
  
 h2. Comments
 
@@ -68,7 +68,7 @@ h2. List of Properties
 |normals|Vertex Normals|Real list|list count must be divisible by 3|
 |texturecoords|Texture coordinates|Real list|list count must be divisible by 2|
 
-h2. Example file
+h2. Example "cube.flower" file
 
 bc.. # Cube
 type convex
@@ -86,6 +86,12 @@ indexes 0,2,3 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7
 
 h2. Future
 
-* Support for Materials, Vertex Flags, Vertex Masses, Tetrahedra and SoftBodies.
+p. Future extensions to the flower file format may be the following;
+
+* Materials
+* Tetrahedra
+* SoftBodies
+* Vertex Flags
+* Vertex Masses
 
 p. END. Last modified; 10-Sept-2009, Robin Southern

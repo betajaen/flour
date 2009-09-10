@@ -161,16 +161,40 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Resources"
+			>
+			<File
+				RelativePath=".\flour.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Documentation"
+			>
+			<File
+				RelativePath="..\..\source\FlourFlowerSchema.textile"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Exporters"
+			>
+			<File
+				RelativePath="..\..\exporters\flower_blender_export.py"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\source\Flour.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\source\Flour.h"
-			>
-		</File>
-		<File
-			RelativePath=".\flour.rc"
 			>
 		</File>
 		<File
@@ -191,10 +215,6 @@
 		</File>
 		<File
 			RelativePath="..\..\source\FlourFlowerFile.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\source\FlourFlowerSchema.textile"
 			>
 		</File>
 		<File
@@ -239,10 +259,6 @@
 		</File>
 		<File
 			RelativePath="..\..\source\FlourToolVersion.h"
-			>
-		</File>
-		<File
-			RelativePath=".\resource.h"
 			>
 		</File>
 	</Files>
