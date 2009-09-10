@@ -1,4 +1,4 @@
-h1. Flour Text File Schema
+h1. Flower Text File Schema
 
 h2. Abstract
 
@@ -86,6 +86,6 @@ indexes 0,2,3 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7
 
 h2. Future
 
-* Support for Tetrahedra and SoftBodies.
+* Support for Materials, Vertex Flags, Vertex Masses, Tetrahedra and SoftBodies.
 
-p. END. Last modified; 09-Sept-2009, Robin Southern
+p. END. Last modified; 10-Sept-2009, Robin Southern

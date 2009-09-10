@@ -31,7 +31,7 @@
 #include "FlourToolFiles.h"
 
 // Files of Flour
-#include "FlourTxtFile.h"
+#include "FlourFlowerFile.h"
 #include "FlourNxsFile.h"
 
 void Flour::registerTools()
@@ -48,6 +48,6 @@ void Flour::registerTools()
 
 void Flour::registerFiles()
 {
- registerFile(new FlourTxtFile());
+ registerFile(new FlourFlowerFile());
  registerFile(new FlourNxsFile());
 }

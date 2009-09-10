@@ -1,4 +1,4 @@
-/** File: FlourTxtFile.cpp
+/** File: FlourFlowerFile.cpp
     Created on: 09-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -32,7 +32,7 @@
 #include <vector>
 
 FlourNxsFile::FlourNxsFile()
-: FlourFile(".nxs", "PhysX Shape File", ".txt", FlourFile::FileType_Mesh)
+: FlourFile(".nxs", "PhysX Shape File", ".flower", FlourFile::FileType_Mesh)
 {
 }
 

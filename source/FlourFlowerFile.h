@@ -1,4 +1,4 @@
-/** File: FlourTxtFile.h
+/** File: FlourFlowerFile.h
     Created on: 09-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,22 +23,22 @@
     THE SOFTWARE.
 */
 
-#ifndef FLOUR_TXT_FILE_H
-#define FLOUR_TXT_FILE_H
+#ifndef FLOUR_FLOWER_FILE_H
+#define FLOUR_FLOWER_FILE_H
 
 #include "FlourFile.h"
 
 #include "NxOgre.h"
 #include <string>
 
-class FlourTxtFile : public FlourFile
+class FlourFlowerFile : public FlourFile
 {
   
  public:
   
-                                      FlourTxtFile();
+                                      FlourFlowerFile();
   
-                                     ~FlourTxtFile();
+                                     ~FlourFlowerFile();
   
   NxOgre::MeshData*                   loadMesh(const std::string& path);
   

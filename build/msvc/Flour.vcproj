@@ -186,6 +186,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\source\FlourFlowerFile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourFlowerFile.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourFlowerSchema.textile"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\FlourNxsFile.cpp"
 			>
 		</File>
@@ -227,18 +239,6 @@
 		</File>
 		<File
 			RelativePath="..\..\source\FlourToolVersion.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\source\FlourTxtFile.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\source\FlourTxtFile.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\source\FlourTXTSchema.textile"
 			>
 		</File>
 		<File

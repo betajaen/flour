@@ -1,4 +1,4 @@
-/** File: FlourTxtFile.cpp
+/** File: FlourFlowerFile.cpp
     Created on: 09-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,24 +23,24 @@
     THE SOFTWARE.
 */
 
-#include "FlourTxtFile.h"
+#include "FlourFlowerFile.h"
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
 
-FlourTxtFile::FlourTxtFile()
-: FlourFile(".txt", "Flour text file for meshes", ".nxs", FlourFile::FileType_Mesh)
+FlourFlowerFile::FlourFlowerFile()
+: FlourFile(".flower", "Flower for meshes", ".nxs", FlourFile::FileType_Mesh)
 {
 }
 
-FlourTxtFile::~FlourTxtFile()
+FlourFlowerFile::~FlourFlowerFile()
 {
 }
 
 
-NxOgre::MeshData* FlourTxtFile::loadMesh(const std::string& path)
+NxOgre::MeshData* FlourFlowerFile::loadMesh(const std::string& path)
 {
  open(path, true, NxOgre::Enums::ResourceAccess_ReadOnly);
  
@@ -166,7 +166,7 @@ NxOgre::MeshData* FlourTxtFile::loadMesh(const std::string& path)
  
 }
 
-void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
+void  FlourFlowerFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
 {
  if (data == 0)
   return;
@@ -267,7 +267,7 @@ void  FlourTxtFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
  close();
 }
 
-void FlourTxtFile::getLine(NxOgre::Buffer<char>& buffer)
+void FlourFlowerFile::getLine(NxOgre::Buffer<char>& buffer)
 {
  buffer.clear();
  while(1)
@@ -280,7 +280,7 @@ void FlourTxtFile::getLine(NxOgre::Buffer<char>& buffer)
  buffer.append(0);
 }
 
-void FlourTxtFile::writeLine(NxOgre::SharedStringStream& line)
+void FlourFlowerFile::writeLine(NxOgre::SharedStringStream& line)
 {
  mWorkingResource->write(line.get(), line.length());
  mWorkingResource->writeChar('\n');
