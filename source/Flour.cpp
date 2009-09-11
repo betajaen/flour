@@ -46,7 +46,6 @@ Flour::Flour()
 
 Flour::~Flour()
 {
- 
  for (std::map<std::string, FlourFile*>::iterator it = mFiles.begin(); it != mFiles.end(); it++)
   delete (*it).second;
  
@@ -55,7 +54,6 @@ Flour::~Flour()
  
  if (mWorld)
   NxOgre::World::destroyWorld();
- 
 }
 
 Flour* Flour::getInstance()
@@ -71,8 +69,10 @@ std::string Flour::getVersion() const
 void Flour::fromCommandLine(int argc, char** argv)
 {
  
- boost::program_options::parsed_options options
-  = boost::program_options::command_line_parser(argc, argv).options(mOptionsDescription).allow_unregistered().run();
+ boost::program_options::parsed_options options = boost::program_options::command_line_parser(argc, argv)
+                                                . options(mOptionsDescription)
+                                                . allow_unregistered()
+                                                . run();
  
  boost::program_options::store(options, mVariablesMap);
 

@@ -49,6 +49,14 @@ class FlourViewer : public FlourTool
 
   void renderFrame();
   
+  float               mCameraDistance;
+
+  float               mCameraYaw;
+  
+  float               mCameraPitch;
+  
+  NxOgre::Vec3        mCamera;
+  
  protected:
   
   void                createWindow(const std::string& caption);
@@ -59,11 +67,10 @@ class FlourViewer : public FlourTool
   
   int                 mWindowHandle;
   
-  NxOgre::Vec3        mCamera;
   NxOgre::Vec3        mCameraTarget;
   
   std::vector<NxOgre::MeshData*> mMeshes;
-  float               mRotAngle;
+  
 };
 
 #endif
