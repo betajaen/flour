@@ -40,6 +40,8 @@ class FlourFlowerFile : public FlourFile
   
                                      ~FlourFlowerFile();
   
+  NxOgre::Mesh*                       cookInternal(); // Helper function.
+
   NxOgre::MeshData*                   loadMesh(const std::string& path);
   
   void                                saveMesh(const std::string& path, NxOgre::MeshData*);

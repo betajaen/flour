@@ -56,14 +56,6 @@ class FlourConvert : public FlourTool
   
   void process();
   
-  void convertConvex(const std::string&);
-  
-  void convertTriangle(const std::string&);
-  
-  void convertHeightfield(const std::string&);
-  
-  void convertCloth(const std::string&);
-
  protected:
   
   ConversionType mConversionType;

@@ -1,5 +1,5 @@
-/** File: FlourNxsFile.h
-    Created on: 09-Sept-09
+/** File: FlourToolTransform.cpp
+    Created on: 12-Sept-09
     Author: Robin Southern "betajaen"
 
     Copyright (c) 2009 Robin Southern
@@ -23,30 +23,38 @@
     THE SOFTWARE.
 */
 
-#ifndef FLOUR_NXS_FILE_H
-#define FLOUR_NXS_FILE_H
+#ifndef FLOUR_TOOL_TRANSFORM_H
+#define FLOUR_TOOL_TRANSFORM_H
 
-#include "FlourFile.h"
+#include "FlourTool.h"
 
-#include "NxOgre.h"
-#include <string>
-
-class FlourNxsFile : public FlourFile
+class FlourTransform : public FlourTool
 {
-  
  public:
   
-                                      FlourNxsFile();
+  enum TransformType
+  {
+   TransformType_Scale,
+   TransformType_Rotate,
+   TransformType_Move,
+  };
   
-                                     ~FlourNxsFile();
+  enum Errors
+  {
+   ERROR_NoFile = 1000,
+   ERROR_NoMeshData,
+   ERROR_UnrecongisedFileformat
+  };
   
-  NxOgre::MeshData*                   loadMesh(const std::string& path);
+  FlourTransform(TransformType);
   
-  void                                saveMesh(const std::string& path, NxOgre::MeshData*);
+ ~FlourTransform();
   
-  NxOgre::Mesh*                       get(const std::string& path);
+  void process();
   
  protected:
+  
+  TransformType mTransformType;
   
 };
 

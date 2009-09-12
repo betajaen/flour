@@ -2,4 +2,6 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDI_ICON1                               100
+#define APP_ICON                               100
+#define CUPCAKE_ICON                           101
+#define VIEWER_ICON                            102

@@ -95,3 +95,8 @@ void FlourFile::close()
  if (mWorkingResource)
   mWorkingResource->getArchive()->close(mWorkingResource);
 }
+
+NxOgre::Mesh* FlourFile::get(const std::string& path)
+{
+ return 0; // virtual
+}

@@ -24,6 +24,7 @@
 */
 
 #include "FlourNxsFile.h"
+#include "Flour.h"
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -64,6 +65,8 @@ void  FlourNxsFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
 
  open(path, false);
  
+ std::cout << data->mType << "\n";
+ 
  NxOgre::ManualMesh mm;
  mm.begin(data->mType, data->mVertices.size(), data->mIndexes.size());
  
@@ -95,3 +98,19 @@ void  FlourNxsFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
 
  close();
 }
+
+NxOgre::Mesh* FlourNxsFile::get(const std::string& path)
+{
+ 
+ NxOgre::Archive* archive = Flour::getInstance()->createOrGetArchive(path);
+ 
+ boost::filesystem::path pathname(path);
+ 
+ std::cout << pathname.filename().c_str() << std::endl;
+ 
+ NxOgre::SharedStringStream stream;
+ stream << archive->getName() << ":" << pathname.filename().c_str();
+ return NxOgre::MeshManager::getSingleton()->load(NxOgre::ArchiveResourceIdentifier(stream.get()));
+ 
+}
+

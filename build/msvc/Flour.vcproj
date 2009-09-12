@@ -165,7 +165,7 @@
 			Name="Resources"
 			>
 			<File
-				RelativePath=".\flour.rc"
+				RelativePath=".\glut.rc"
 				>
 			</File>
 			<File
@@ -226,6 +226,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\source\FlourOpenGL.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourOpenGL.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\FlourRegistry.cpp"
 			>
 		</File>
@@ -246,11 +254,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\source\FlourToolCupcake.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolCupcake.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\source\FlourToolFiles.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\source\FlourToolFiles.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolTransform.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\source\FlourToolTransform.h"
 			>
 		</File>
 		<File

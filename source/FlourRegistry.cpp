@@ -30,20 +30,25 @@
 #include "FlourToolConvert.h"
 #include "FlourToolFiles.h"
 #include "FlourToolViewer.h"
+#include "FlourToolCupcake.h"
+#include "FlourToolTransform.h"
+
 // Files of Flour
 #include "FlourFlowerFile.h"
 #include "FlourNxsFile.h"
 
 void Flour::registerTools()
 {
- 
  registerTool("version", new FlourVersion());
  registerTool("files", new FlourFiles());
  registerTool("viewer", new FlourViewer());
+ registerTool("cupcake", new FlourCupcake());
  registerTool("convex", new FlourConvert(FlourConvert::ConversionType_Convex));
  registerTool("triangle", new FlourConvert(FlourConvert::ConversionType_Triangle));
  registerTool("cloth", new FlourConvert(FlourConvert::ConversionType_Cloth));
- 
+ registerTool("scale", new FlourTransform(FlourTransform::TransformType_Scale));
+ registerTool("rotate", new FlourTransform(FlourTransform::TransformType_Rotate));
+ registerTool("move", new FlourTransform(FlourTransform::TransformType_Move));
 }
 
 void Flour::registerFiles()

@@ -65,6 +65,8 @@ class Flour
   
   void        initNxOgre();
   
+  NxOgre::Archive*    createOrGetArchive(const std::string&);
+  
   std::map<std::string, FlourTool*>            mTools;
   
   std::map<std::string, FlourFile*>            mFiles;

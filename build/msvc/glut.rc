@@ -12,4 +12,6 @@
 // Icon resources
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
-IDI_ICON1          ICON           "flour.ico"
+APP_ICON          ICON           "flour.ico"
+CUPCAKE_ICON          ICON       "cake.ico"
+VIEWER_ICON          ICON        "viewer.ico"

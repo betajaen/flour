@@ -1,5 +1,5 @@
-/** File: FlourNxsFile.h
-    Created on: 09-Sept-09
+/** File: FlourToolVersion.h
+    Created on: 06-Sept-09
     Author: Robin Southern "betajaen"
 
     Copyright (c) 2009 Robin Southern
@@ -23,30 +23,41 @@
     THE SOFTWARE.
 */
 
-#ifndef FLOUR_NXS_FILE_H
-#define FLOUR_NXS_FILE_H
+#ifndef FLOUR_TOOL_CUPCAKE_H
+#define FLOUR_TOOL_CUPCAKE_H
 
-#include "FlourFile.h"
+#include "FlourTool.h"
+#include "FlourOpenGL.h"
 
-#include "NxOgre.h"
-#include <string>
-
-class FlourNxsFile : public FlourFile
+class FlourCupcake : public FlourTool, public OpenGL
 {
   
  public:
   
-                                      FlourNxsFile();
+  enum Errors
+  {
+   ERROR_NoFile,
+   ERROR_NoMeshData,
+   ERROR_UnrecongisedFileformat
+  };
   
-                                     ~FlourNxsFile();
+  FlourCupcake();
   
-  NxOgre::MeshData*                   loadMesh(const std::string& path);
+ ~FlourCupcake();
   
-  void                                saveMesh(const std::string& path, NxOgre::MeshData*);
+  void process();
   
-  NxOgre::Mesh*                       get(const std::string& path);
+  void        onFrame();
+  
+  void        onKeyEvent(char key);
+  
+  void        onMouseDragEvent(int ButtonID, int deltaX, int deltaY);
+  
+  void        onMouseButtonEvent(int ButtonID, int x, int y);
   
  protected:
+  
+  float mYaw, mPitch, mDistance;
   
 };
 

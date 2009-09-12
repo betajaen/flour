@@ -51,7 +51,11 @@ class FlourFile
   std::string                         getDescription() const { return mDescription; }
   
   FileType                            getType() const { return mType; }
-
+  
+  std::string                         createOrGetArchive(const std::string& directory);
+  
+  virtual NxOgre::Mesh*               get(const std::string& path);
+  
   virtual NxOgre::MeshData*           loadMesh(const std::string& path);
   
   virtual void                        saveMesh(const std::string& path, NxOgre::MeshData*);

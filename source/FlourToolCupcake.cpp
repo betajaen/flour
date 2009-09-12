@@ -1,4 +1,4 @@
-/** File: FlourToolVersion.cpp
+/** File: FlourToolFiles.cpp
     Created on: 06-Sept-09
     Author: Robin Southern "betajaen"
 
@@ -23,7 +23,7 @@
     THE SOFTWARE.
 */
 
-#include "FlourToolViewer.h"
+#include "FlourToolCupcake.h"
 #include "Flour.h"
 #include <iostream>
 
@@ -35,8 +35,8 @@
 namespace N = NxOgre;
 namespace E = NxOgre::Enums;
 
-FlourViewer::FlourViewer()
-: FlourTool("viewer", "View saved meshes or heightfields"),
+FlourCupcake::FlourCupcake()
+: FlourTool("cupcake", "Tests saved meshes in a real PhysX Scene"),
   OpenGL(),
   mYaw(-0.785398163 * 2),
   mPitch(0.523598776),
@@ -51,14 +51,16 @@ FlourViewer::FlourViewer()
  mPositionalOptions.add("file", -1);
  
  add_error(ERROR_NoFile, "Need at least one file.");
+ add_error(ERROR_NoMeshData, "File contains no mesh data.");
+ add_error(ERROR_UnrecongisedFileformat, "Unrecongised file format.");
  
 }
 
-FlourViewer::~FlourViewer()
+FlourCupcake::~FlourCupcake()
 {
 }
 
-void FlourViewer::process()
+void FlourCupcake::process()
 {
 
  // Need at least one file.
@@ -68,35 +70,61 @@ void FlourViewer::process()
   return;
  }
 
- createWindow("Flour - Cupcake", 1024, 768, OpenGL::WindowIcon_Brick);
+ createWindow("Flour - Cupcake", 1024, 768, OpenGL::WindowIcon_Cake);
  createScene();
  orbitCamera(mYaw, mPitch, mDistance);
  std::vector<std::string> files = mVariablesMap["file"].as<std::vector<std::string>>();
-
- N::Vec3 pos;
- pos.x = 0;
- pos.y = 0;
- pos.z = 2;
-
+ 
  for (unsigned int i=0; i < files.size(); i++)
  {
-  createBody(files[i], 0, pos);
-  pos.z += 2;
+  std::string file_name = files[i];
+  
+  if (boost::contains(file_name, "*"))
+  {
+   std::vector<std::string> strings;
+   boost::split(strings, file_name, boost::is_any_of("*"));
+   file_name = strings[0];
+   unsigned int count = boost::lexical_cast<unsigned int, std::string>(strings[1]);
+   N::Vec3 pos;
+   pos.x = 0;
+   pos.y = 2;
+   pos.z = 0;
+   for (unsigned int i=0;i < count;i++)
+   {
+    Body* body = createBody(file_name, 100, pos);
+    pos.y += 2;
+   }
+  }
+  else
+  {
+   createBody(file_name, 100);
+  }
  }
 
  startRendering();
 }
 
 
-void FlourViewer::onFrame()
+void FlourCupcake::onFrame()
 {
 }
 
-void FlourViewer::onKeyEvent(char key)
+void FlourCupcake::onKeyEvent(char key)
 {
+ 
+ if (key == 'j' && mWorkingBody)
+ {
+  N::Vec3 torque;
+  torque.x = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
+  torque.y = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
+  torque.z = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
+  torque *= 1000;
+  mWorkingBody->mActor->addTorque(torque);
+ }
+ 
 }
 
-void FlourViewer::onMouseDragEvent(int ButtonID, int dx, int dy)
+void FlourCupcake::onMouseDragEvent(int ButtonID, int dx, int dy)
 {
  if (ButtonID == GLUT_LEFT_BUTTON)
  {
@@ -112,15 +140,7 @@ void FlourViewer::onMouseDragEvent(int ButtonID, int dx, int dy)
  orbitCamera(mYaw, mPitch, mDistance);
 }
 
-void FlourViewer::onMouseButtonEvent(int ButtonID, int x, int y)
+void FlourCupcake::onMouseButtonEvent(int ButtonID, int x, int y)
 {
 }
-
-
-
-
-
-
-
-
 

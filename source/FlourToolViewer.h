@@ -27,10 +27,11 @@
 #define FLOUR_TOOL_VIEWER_H
 
 #include "FlourTool.h"
+#include "FlourOpenGL.h"
+
 #include "NxOgre.h"
 
-
-class FlourViewer : public FlourTool
+class FlourViewer : public FlourTool, public OpenGL
 {
  public:
   
@@ -45,31 +46,19 @@ class FlourViewer : public FlourTool
   
  ~FlourViewer();
   
-  void process();
-
-  void renderFrame();
+  void        process();
   
-  float               mCameraDistance;
-
-  float               mCameraYaw;
+  void        onFrame();
   
-  float               mCameraPitch;
+  void        onKeyEvent(char key);
   
-  NxOgre::Vec3        mCamera;
+  void        onMouseDragEvent(int ButtonID, int deltaX, int deltaY);
+  
+  void        onMouseButtonEvent(int ButtonID, int x, int y);
   
  protected:
   
-  void                createWindow(const std::string& caption);
-  
-  void                createMesh(const std::string& meshName);
-  
-  NxOgre::World*      mWorld;
-  
-  int                 mWindowHandle;
-  
-  NxOgre::Vec3        mCameraTarget;
-  
-  std::vector<NxOgre::MeshData*> mMeshes;
+  float mYaw, mPitch, mDistance;
   
 };
 

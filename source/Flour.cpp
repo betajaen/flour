@@ -30,6 +30,7 @@
 #include <iostream>
 #include <boost/program_options.hpp> 
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 Flour* Flour::mFlourInstance = 0;
 
@@ -172,4 +173,31 @@ void Flour::initNxOgre()
  
  mWorld = NxOgre::World::createWorld();
  
+}
+
+NxOgre::Archive* Flour::createOrGetArchive(const std::string& archive_path)
+{
+ 
+ boost::filesystem::path path(archive_path);
+ 
+ std::string dir = path.parent_path().string().c_str();
+ 
+ if (dir.length() == 0)
+  dir = "./";
+ 
+ std::stringstream archive_stream;
+ archive_stream << "flour_" << NxOgre::Functions::generateHash(dir.c_str(), NxOgre::Enums::HashAlgorithm_DJB2);
+ 
+ NxOgre::String archive_name(archive_stream.str().c_str());
+ 
+ NxOgre::Archive* archive = NxOgre::ResourceSystem::getSingleton()->getArchiveByName(archive_name);
+ 
+ if (archive)
+  return archive;
+ 
+ std::stringstream uri_stream;
+ uri_stream << "file:" << dir;
+ std::cout << "Creating archive named '" << archive_name.c_str() << "' -> '" << uri_stream.str() << "'\n";
+ 
+ return NxOgre::ResourceSystem::getSingleton()->openArchive(archive_name, NxOgre::URI(uri_stream.str().c_str()));
 }
