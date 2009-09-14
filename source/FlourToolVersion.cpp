@@ -38,7 +38,7 @@ FlourVersion::FlourVersion() : FlourTool("version", "Prints version information"
     ("help", "Show this")
     ("verbose", "Show library version information")
  ;
-  
+ 
 }
 
 FlourVersion::~FlourVersion()
@@ -59,6 +59,7 @@ void FlourVersion::process()
  " with the following libraries" << std::endl
            << " - NxOgre " << NxOgreVersionMajor << "." << NxOgreVersionMinor << "." << NxOgreVersionRelease << " " << NxOgreCodeName << std::endl
            << " - Boost " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl
+           << " - AntTweakBar 1.13" << std::endl
            << std::endl << "Visit: http://nxogre.org/flour";
  }
  

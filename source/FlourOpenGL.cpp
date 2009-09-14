@@ -35,7 +35,7 @@
 #include <GL/glut.h>
 
 #include <NxOgre.h>
-
+#include <AntTweakBar.h>
 namespace N = NxOgre;
 namespace E = NxOgre::Enums;
 
@@ -45,6 +45,13 @@ unsigned int gOpenGL_LastMousePositionY   = 0;
 unsigned int gOpenGL_LastMouseButton      = 0;
 bool         gOpenGL_MouseButtonDown      = false;
 bool         gOpenGL_MouseButtonJustDown  = false;
+
+void TW_CALL callQuitTW(void*)
+{
+ 
+ TwTerminate();
+ delete Flour::getInstance();
+}
 
 void OpenGL_RenderCallback()
 {
@@ -58,11 +65,14 @@ void OpenGL_IdleCallback()
 
 void OpenGL_ExitCallback()
 {
- delete Flour::getInstance();
+ callQuitTW(0);
 }
 
 void OpenGL_KeyboardCallback(unsigned char key, int x, int y)
 {
+ 
+ if (TwEventKeyboardGLUT(key, x, y))
+  return;
  
  gOpenGL_WorkingTool->onKeyCallback(key);
  gOpenGL_WorkingTool->onKeyEvent(key);
@@ -71,6 +81,9 @@ void OpenGL_KeyboardCallback(unsigned char key, int x, int y)
 void OpenGL_MouseCallback(int button, int state, int x, int y)
 {
  
+ if (TwEventMouseButtonGLUT(button, state, x, y))
+  return;
+
  gOpenGL_MouseButtonDown = (state == GLUT_DOWN);
  
  if (state == GLUT_DOWN)
@@ -86,6 +99,37 @@ void OpenGL_MouseCallback(int button, int state, int x, int y)
 
 void OpenGL_MotionCallback(int x, int y)
 {
+ 
+ if (TwEventMouseMotionGLUT(x,y))
+  return;
+ 
+ if (gOpenGL_MouseButtonDown && gOpenGL_MouseButtonJustDown)
+ {
+  gOpenGL_MouseButtonJustDown = false;
+  gOpenGL_LastMousePositionX = x;
+  gOpenGL_LastMousePositionY = y;
+ }
+ 
+ if (gOpenGL_MouseButtonDown)
+ {
+   
+   int deltaX = gOpenGL_LastMousePositionX - x;
+   int deltaY = gOpenGL_LastMousePositionY - y;
+   
+   gOpenGL_WorkingTool->onMouseDragEvent(gOpenGL_LastMouseButton, deltaX, deltaY);
+   
+   gOpenGL_LastMousePositionX = x;
+   gOpenGL_LastMousePositionY = y;
+   
+ }
+ 
+}
+
+void OpenGL_PassiveMotionCallback(int x, int y)
+{
+ 
+ if (TwEventMouseMotionGLUT(x,y))
+  return;
  
  if (gOpenGL_MouseButtonDown && gOpenGL_MouseButtonJustDown)
  {
@@ -122,7 +166,8 @@ void getColour(unsigned col, float &r, float &g, float &b)
 OpenGL::OpenGL()
 : mWorld(0),
   mScene(0),
-  mNextColour(0)
+  mNextColour(0),
+  mNextBodiesID(0)
 {
 
 mColours.push_back(0xffefd5);
@@ -303,43 +348,40 @@ void OpenGL::createWindow(const std::string& window_caption, unsigned int width,
  glutKeyboardFunc(OpenGL_KeyboardCallback);
  glutMouseFunc(OpenGL_MouseCallback);
  glutMotionFunc(OpenGL_MotionCallback);
- 
+ glutPassiveMotionFunc(OpenGL_PassiveMotionCallback);
  atexit(OpenGL_ExitCallback);
  
-	glClearColor(0.1337f, 0.1337f, 0.1337f, 0.1337f);
-	glClearDepth(1.0f);
+ glClearColor(0.1337f, 0.1337f, 0.1337f, 0.1337f);
+ glClearDepth(1.0f);
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+ glEnable(GL_DEPTH_TEST);
+ glDepthFunc(GL_LEQUAL);
 
-	glShadeModel(GL_SMOOTH);
+ glShadeModel(GL_SMOOTH);
 
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-	
-	// Enable light and set up 2 light sources (GL_LIGHT0 and GL_LIGHT1)
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
+ glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
-	// We're setting up two light sources. One of them is located
-	// on the left side of the model (x = -1.5f) and emits white light. The
-	// second light source is located on the right side of the model (x = 1.5f)
-	// emitting red light.
+ // Enable light and set up 2 light sources (GL_LIGHT0 and GL_LIGHT1)
+ glEnable(GL_LIGHTING);
+ glEnable(GL_LIGHT0);
+ glEnable(GL_LIGHT1);
 
-	// GL_LIGHT0: the white light emitting light source
-	// Create light components for GL_LIGHT0
-	float ambientLight0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	float diffuseLight0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-	float specularLight0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	float position0[] = { -25, 15, -25, 1.0f };	
-	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight0);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight0);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight0);
-	glLightfv(GL_LIGHT0, GL_POSITION, position0);
+ // We're setting up two light sources. One of them is located
+ // on the left side of the model (x = -1.5f) and emits white light. The
+ // second light source is located on the right side of the model (x = 1.5f)
+ // emitting red light.
 
-
-
+ // GL_LIGHT0: the white light emitting light source
+ // Create light components for GL_LIGHT0
+ float ambientLight0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+ float diffuseLight0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+ float specularLight0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+ float position0[] = { -25, 15, -25, 1.0f };	
+ // Assign created components to GL_LIGHT0
+ glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight0);
+ glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight0);
+ glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight0);
+ glLightfv(GL_LIGHT0, GL_POSITION, position0);
 
  mCamera = NxOgre::Vec3::ZERO;
  mCameraTarget = NxOgre::Vec3::ZERO;
@@ -352,6 +394,16 @@ void OpenGL::createWindow(const std::string& window_caption, unsigned int width,
  // ...
 #endif
  
+ TwInit(TW_OPENGL, NULL);
+ TwWindowSize(width, height);
+ 
+ mBar = TwNewBar("Flour");
+ 
+ TwDefine(" Flour color='32 32 32' alpha=64 text=light ");
+ TwDefine(" GLOBAL fontsize=2 ");
+ TwDefine(" Flour refresh=0.016 ");
+ TwDefine(" Flour iconifiable=false ");
+ TwDefine(" GLOBAL fontresizable=false ");
 }
 
 void OpenGL::createScene(const N::Vec3& gravity, bool useHardware, bool groundPlane)
@@ -427,6 +479,8 @@ Body* OpenGL::createBody(const std::string& mesh_path, float mass, const N::Matr
 
  if (mNextColour == mColours.size())
   mNextColour = 0;
+
+ body->mID = mNextBodiesID++;
  
  getColour(colour, body->mRed, body->mGreen, body->mBlue);
  
@@ -437,13 +491,14 @@ Body* OpenGL::createBody(const std::string& mesh_path, float mass, const N::Matr
 void OpenGL::startRendering()
 {
  gOpenGL_WorkingTool = this;
- mWorkingBody = 0;
  mWorkingBodyIndex = 0;
  glutMainLoop();
 }
 
 void OpenGL::renderOnce()
 {
+ 
+ onPreFrame();
  
  //////////////////////////////////////////////////////////////
  
@@ -456,25 +511,28 @@ void OpenGL::renderOnce()
  glMatrixMode(GL_PROJECTION);
  glLoadIdentity();
  gluPerspective(60.0f, (float)glutGet(GLUT_WINDOW_WIDTH)/(float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
- if (mWorkingBody == 0)
+ 
+ N::Vec3 origin;
+ if (mWorkingBodyIndex > mBodies.size())
+  mWorkingBodyIndex = 0;
+ 
+ if (mBodies.size())
  {
-  gluLookAt(mCamera.x, mCamera.y, mCamera.z, mCameraTarget.x, mCameraTarget.y, mCameraTarget.z, 0.0f, 1.0f, 0.0f);
+  Body* body = mBodies[mWorkingBodyIndex];
+  if (body->mActor)
+   origin = body->mActor->getGlobalPosition();
+  else if (body->mSceneGeometry)
+   origin = body->mSceneGeometry->getGlobalPosition();
  }
  else
- {
-  N::Vec3 origin;
-  if (mWorkingBody->mActor)
-   origin = mWorkingBody->mActor->getGlobalPosition();
-  else if (mWorkingBody->mSceneGeometry)
-   origin = mWorkingBody->mSceneGeometry->getGlobalPosition();
-  
-  gluLookAt(origin.x + mCamera.x, origin.y + mCamera.y, origin.z + mCamera.z, origin.x + mCameraTarget.x, origin.y + mCameraTarget.y, origin.z + mCameraTarget.z, 0.0f, 1.0f, 0.0f);
+  origin = N::Vec3::ZERO;
  
- }
+ gluLookAt(origin.x + mCamera.x, origin.y + mCamera.y, origin.z + mCamera.z, origin.x + mCameraTarget.x, origin.y + mCameraTarget.y, origin.z + mCameraTarget.z, 0.0f, 1.0f, 0.0f);
+ 
+ 
  glMatrixMode(GL_MODELVIEW);
  glLoadIdentity();
  
-
  //////////////////////////////////////////////////////////////
  
  glDisable(GL_LIGHTING);
@@ -487,21 +545,68 @@ void OpenGL::renderOnce()
  {
   mBodies[i]->draw();
  }
-
+ 
  //////////////////////////////////////////////////////////////
  
- onFrame();
+ onPostFrame();
+ 
+ //////////////////////////////////////////////////////////////
+ 
+ TwDraw();
+ 
+ //////////////////////////////////////////////////////////////
  
  glutSwapBuffers();
 }
 
-void OpenGL::onFrame()
+void OpenGL::onPreFrame()
 {
  // virtual
 }
 
-void OpenGL::orbitCamera(float yaw, float pitch, float distance)
+void OpenGL::onPostFrame()
 {
+ // virtual
+}
+
+void OpenGL::resetBodies()
+{
+ for (unsigned int i=0;i < mBodies.size();i++)
+ {
+  if (mBodies[i]->mActor)
+  {
+   mBodies[i]->mActor->setLinearMomentum(N::Vec3(0,0,0));
+   mBodies[i]->mActor->setAngularMomentum(N::Vec3(0,0,0));
+   mBodies[i]->mActor->setGlobalPose(mBodies[i]->mPose);
+  }
+ }
+}
+
+N::Actor* OpenGL::getSelectedActor()
+{
+ if (mBodies.size() == 0)
+  return 0;
+ if (mWorkingBodyIndex > mBodies.size())
+  return 0;
+ Body* body = mBodies[mWorkingBodyIndex];
+ if (body->mSceneGeometry)
+  return 0;
+ return body->mActor;
+}
+
+
+void OpenGL::orbitCamera(float& yaw, float& pitch, float& distance)
+{
+ if (yaw < -bml::Pi)
+  yaw = bml::Pi;
+ else if (yaw > bml::Pi)
+  yaw = -bml::Pi;
+
+ if (pitch < 0)
+  pitch = 0;
+ else if (pitch > 1.2f)
+  pitch = 1.2f;
+
  mCamera.x = sin(yaw) * distance;
  mCamera.y = tan(pitch) * distance;
  mCamera.z = cos(yaw) * distance;
@@ -572,7 +677,6 @@ void OpenGL::onKeyCallback(char key)
   
   if (mBodies.size() == 0 || mWorkingBodyIndex > mBodies.size() - 1)
   {
-   mWorkingBody = 0;
    mWorkingBodyIndex = 0;
    return;
   }
@@ -592,7 +696,6 @@ void OpenGL::onKeyCallback(char key)
     mWorkingBodyIndex++;
   }
   
-  mWorkingBody = mBodies[mWorkingBodyIndex];
  }
 }
 

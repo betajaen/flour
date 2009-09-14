@@ -48,7 +48,7 @@ class FlourViewer : public FlourTool, public OpenGL
   
   void        process();
   
-  void        onFrame();
+  void        onPostFrame();
   
   void        onKeyEvent(char key);
   

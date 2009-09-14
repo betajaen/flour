@@ -44,8 +44,6 @@ class FlourNxsFile : public FlourFile
   
   void                                saveMesh(const std::string& path, NxOgre::MeshData*);
   
-  NxOgre::Mesh*                       get(const std::string& path);
-  
  protected:
   
 };

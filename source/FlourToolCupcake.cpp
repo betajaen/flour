@@ -35,6 +35,103 @@
 namespace N = NxOgre;
 namespace E = NxOgre::Enums;
 
+FlourCupcake* mCupcake;
+
+unsigned int RigidBodyData_Position        = 0; // X,Y,Z
+unsigned int RigidBodyData_Orientation     = 1; // Quat
+unsigned int RigidBodyData_LinearVelocity  = 2; // Dir
+unsigned int RigidBodyData_AngularVelocity = 3; // Dir
+
+void TW_CALL TW_Scene_Reset(void*)
+{
+ mCupcake->resetBodies();
+}
+
+void TW_CALL TW_RigidBody_Set(const void *value, void *clientData)
+{
+ 
+ N::Actor* actor = mCupcake->getSelectedActor();
+ 
+ if (actor == 0)
+  return;
+ 
+ unsigned int type = (int) clientData;
+ 
+ if (type == RigidBodyData_Position)
+ {
+  const float* vec = static_cast<const float*>(value);
+  actor->setGlobalPosition(N::Vec3(vec[0], vec[1], vec[2]));
+ }
+ else if (type == RigidBodyData_Orientation)
+ {
+  const float* quat = static_cast<const float*>(value);
+  actor->setGlobalOrientation(N::Quat(quat[3], quat[0], quat[1], quat[2]));
+ }
+ else if (type == RigidBodyData_LinearVelocity)
+ {
+  const float* vec = static_cast<const float*>(value);
+  actor->setLinearVelocity(N::Vec3(vec[0], vec[1], vec[2]));
+ }
+ else if (type == RigidBodyData_AngularVelocity)
+ {
+  const float* vec = static_cast<const float*>(value);
+  actor->setAngularVelocity(N::Vec3(vec[0], vec[1], vec[2]));
+ }
+ 
+}
+
+void TW_CALL TW_RigidBody_Get(void *value, void *clientData)
+{
+ 
+ N::Actor* actor = mCupcake->getSelectedActor();
+ 
+ if (actor == 0)
+  return;
+ 
+ unsigned int type = (int) clientData;
+ 
+ if (type == RigidBodyData_Position)
+ {  
+  float* vec = static_cast<float*>(value);
+  N::Vec3 pos = actor->getGlobalPosition();
+  
+  vec[0] = pos.x;
+  vec[1] = pos.y;
+  vec[2] = pos.z;
+ }
+ else if (type == RigidBodyData_Orientation)
+ {
+  
+  float* quat = static_cast<float*>(value);
+  N::Quat orientation = actor->getGlobalOrientation();
+  
+  quat[0] = orientation.x;
+  quat[1] = orientation.y;
+  quat[2] = orientation.z;
+  quat[3] = orientation.w;
+  
+ }
+ else if (type == RigidBodyData_LinearVelocity)
+ {
+  float* vec = static_cast<float*>(value);
+  N::Vec3 pos = actor->getLinearVelocity();
+  
+  vec[0] = pos.x;
+  vec[1] = pos.y;
+  vec[2] = pos.z;
+ }
+ else if (type == RigidBodyData_AngularVelocity)
+ {
+  float* vec = static_cast<float*>(value);
+  N::Vec3 pos = actor->getAngularVelocity();
+  
+  vec[0] = pos.x;
+  vec[1] = pos.y;
+  vec[2] = pos.z;
+ }
+ 
+}
+
 FlourCupcake::FlourCupcake()
 : FlourTool("cupcake", "Tests saved meshes in a real PhysX Scene"),
   OpenGL(),
@@ -62,7 +159,9 @@ FlourCupcake::~FlourCupcake()
 
 void FlourCupcake::process()
 {
-
+ 
+ mCupcake = this;
+ 
  // Need at least one file.
  if (mVariablesMap.count("file") == 0)
  {
@@ -71,10 +170,24 @@ void FlourCupcake::process()
  }
 
  createWindow("Flour - Cupcake", 1024, 768, OpenGL::WindowIcon_Cake);
+ TwAddButton(mBar, "Reset", TW_Scene_Reset, 0, " group=Scene ");
+ TwAddVarRW(mBar, "Yaw", TW_TYPE_FLOAT, &mYaw, " group=Camera min=-3.14159265 max=3.14159265 step=0.001 ");
+ TwAddVarRW(mBar, "Pitch", TW_TYPE_FLOAT, &mPitch, " group=Camera min=0 max=1.2 step=0.001 ");
+ TwAddVarRW(mBar, "Distance", TW_TYPE_FLOAT, &mDistance, " group=Camera min=0.25, max=100, step=0.05 ");
+  
  createScene();
+ 
+ TwAddVarCB(mBar, "Position", TW_TYPE_DIR3F, TW_RigidBody_Set, TW_RigidBody_Get, (void*) RigidBodyData_Position, " group=Body ");
+ TwAddVarCB(mBar, "Orientation", TW_TYPE_QUAT4F, TW_RigidBody_Set, TW_RigidBody_Get, (void*) RigidBodyData_Orientation, " group=Body ");
+ TwAddVarCB(mBar, "Linear Velocity", TW_TYPE_DIR3F, TW_RigidBody_Set, TW_RigidBody_Get, (void*) RigidBodyData_LinearVelocity, " group=Body ");
+ TwAddVarCB(mBar, "Angular Velocity", TW_TYPE_DIR3F, TW_RigidBody_Set, TW_RigidBody_Get, (void*) RigidBodyData_AngularVelocity, " group=Body ");
+ 
  orbitCamera(mYaw, mPitch, mDistance);
  std::vector<std::string> files = mVariablesMap["file"].as<std::vector<std::string>>();
  
+ std::stringstream enum_stream;
+ enum_stream << " group=Scene enum='";
+
  for (unsigned int i=0; i < files.size(); i++)
  {
   std::string file_name = files[i];
@@ -89,37 +202,55 @@ void FlourCupcake::process()
    pos.x = 0;
    pos.y = 2;
    pos.z = 0;
-   for (unsigned int i=0;i < count;i++)
+   for (unsigned int j=0;j < count;j++)
    {
     Body* body = createBody(file_name, 100, pos);
+    enum_stream << body->mID << " {" << file_name << body->mID << "}";
+    enum_stream << ",";
     pos.y += 2;
    }
   }
   else
   {
-   createBody(file_name, 100);
+   Body* body = createBody(file_name, 100);
+   enum_stream << body->mID << " {" << file_name << body->mID << "}";
+   enum_stream << ",";
   }
  }
-
+ 
+ std::string enum_str(enum_stream.str());
+ 
+ 
+ TwType bodies_enum = TwDefineEnum("BodiesType", NULL, 0);
+ 
+ TwAddVarRW(mBar, "Selected", bodies_enum, &mWorkingBodyIndex, std::string(enum_str.substr(0, enum_str.length() - 1) + "' ").c_str());
+ 
  startRendering();
 }
 
+void FlourCupcake::onPreFrame()
+{
+ orbitCamera(mYaw, mPitch, mDistance);
+}
 
-void FlourCupcake::onFrame()
+void FlourCupcake::onPostFrame()
 {
 }
 
 void FlourCupcake::onKeyEvent(char key)
 {
  
- if (key == 'j' && mWorkingBody)
+ if (key == 'j' && mBodies.size())
  {
+  Body* body = mBodies[mWorkingBodyIndex];
+  if (body->mSceneGeometry)
+   return;
   N::Vec3 torque;
-  torque.x = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
-  torque.y = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
-  torque.z = (bml::math::random() - 0.5f) * mWorkingBody->mActor->getMass();
+  torque.x = (bml::math::random() - 0.5f) * body->mActor->getMass();
+  torque.y = (bml::math::random() - 0.5f) * body->mActor->getMass();
+  torque.z = (bml::math::random() - 0.5f) * body->mActor->getMass();
   torque *= 1000;
-  mWorkingBody->mActor->addTorque(torque);
+  body->mActor->addTorque(torque);
  }
  
 }
@@ -130,11 +261,6 @@ void FlourCupcake::onMouseDragEvent(int ButtonID, int dx, int dy)
  {
   mYaw   += (float(dx) * 0.0075f);
   mPitch -= (float(dy) * 0.0075f);
- }
-
- if (ButtonID == GLUT_RIGHT_BUTTON)
- {
-  mDistance += (float(dy) * 0.005f);
  }
  
  orbitCamera(mYaw, mPitch, mDistance);

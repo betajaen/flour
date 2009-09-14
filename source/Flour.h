@@ -55,6 +55,10 @@ class Flour
   
   void fromString(const std::string&);
   
+  NxOgre::Archive*                  getArchive(const std::string&);
+  
+  NxOgre::ArchiveResourceIdentifier getARI(NxOgre::Archive*, const std::string& path);
+  
   FlourTool*  getTool(const std::string&);
   
   std::string getVersion() const;
@@ -64,8 +68,6 @@ class Flour
   FlourFile*  getFile(const std::string&);
   
   void        initNxOgre();
-  
-  NxOgre::Archive*    createOrGetArchive(const std::string&);
   
   std::map<std::string, FlourTool*>            mTools;
   

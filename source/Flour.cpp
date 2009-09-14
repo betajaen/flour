@@ -175,9 +175,8 @@ void Flour::initNxOgre()
  
 }
 
-NxOgre::Archive* Flour::createOrGetArchive(const std::string& archive_path)
+NxOgre::Archive* Flour::getArchive(const std::string& archive_path)
 {
- 
  boost::filesystem::path path(archive_path);
  
  std::string dir = path.parent_path().string().c_str();
@@ -200,4 +199,12 @@ NxOgre::Archive* Flour::createOrGetArchive(const std::string& archive_path)
  std::cout << "Creating archive named '" << archive_name.c_str() << "' -> '" << uri_stream.str() << "'\n";
  
  return NxOgre::ResourceSystem::getSingleton()->openArchive(archive_name, NxOgre::URI(uri_stream.str().c_str()));
+}
+
+NxOgre::ArchiveResourceIdentifier Flour::getARI(NxOgre::Archive* archive, const std::string& path)
+{
+ std::stringstream ari_stream;
+ ari_stream << archive->getName().c_str() << ":" << boost::filesystem::path(path).filename();
+ 
+ return NxOgre::ArchiveResourceIdentifier(ari_stream.str().c_str());
 }

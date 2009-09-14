@@ -9,6 +9,7 @@ Tooltip: 'Export to Flour readable format (.flower).'
 
 __author__ = "Robin Southern"
 __url__ = "flour.nxogre.org"
+
 __version__ = "0.1"
 __bpydoc__ = """\
 

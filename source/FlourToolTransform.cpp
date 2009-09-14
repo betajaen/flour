@@ -41,7 +41,7 @@ FlourTransform::FlourTransform(TransformType type)
  
  mOptionsDescription.add_options()
     ("help", "Show this")
-     ("file,f", boost::program_options::value< std::vector<std::string> >(), "File(s) to process")
+    ("file,f", boost::program_options::value< std::vector<std::string> >(), "File(s) to process")
     ("x", boost::program_options::value<float>(), "X value")
     ("y", boost::program_options::value<float>(), "Y value")
     ("z", boost::program_options::value<float>(), "Z value")
@@ -52,6 +52,7 @@ FlourTransform::FlourTransform(TransformType type)
  add_error(ERROR_NoFile, "Need at least one file.");
  add_error(ERROR_NoMeshData, "File contains no mesh data.");
  add_error(ERROR_UnrecongisedFileformat, "Unrecongised file format.");
+ 
 }
 
 FlourTransform::~FlourTransform()
@@ -122,6 +123,22 @@ void FlourTransform::process()
   }
   else if (mTransformType == TransformType_Scale)
   {
+   
+   if (transform_x <= 0.0f)
+    transform_x = 1.0f;
+   
+   if (transform_y <= 0.0f)
+    transform_y = 1.0f;
+   
+   if (transform_z <= 0.0f)
+    transform_z = 1.0f;
+   
+   for (unsigned int i=0; i < mesh->mVertices.size(); i+=3)
+   {
+    mesh->mVertices[i]   *= transform_x;
+    mesh->mVertices[i+1] *= transform_y;
+    mesh->mVertices[i+2] *= transform_z;
+   }
   }
   
   in_file->saveMesh(file, mesh);
@@ -136,8 +153,6 @@ void FlourTransform::process()
   else if (mTransformType == TransformType_Scale)
   {
   }
-
-  NxOgre_Delete(mesh);
   
  }
 }

@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\source;..\..\..\..\..\libraries\boost\;..\..\..\BloodyMess\sdk"
-				PreprocessorDefinitions="NXOGRE_OPTIONS_STATIC_LIBRARY"
+				AdditionalIncludeDirectories="..\..\source;..\..\..\..\..\libraries\boost\;..\..\..\BloodyMess\sdk;..\..\libs\AntTweakBar\include"
+				PreprocessorDefinitions="NXOGRE_OPTIONS_STATIC_LIBRARY;TW_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -59,8 +59,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="NxOgreStatic_Debug.lib"
-				AdditionalLibraryDirectories="..\..\..\BloodyMess\sdk;..\..\..\..\..\libraries\boost\lib\"
+				AdditionalDependencies="NxOgreStatic_Debug.lib AntTweakBar.lib"
+				AdditionalLibraryDirectories="..\..\..\BloodyMess\sdk;..\..\..\..\..\libraries\boost\lib\;..\..\libs\AntTweakBar\lib\debug"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
@@ -114,6 +114,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\source;..\..\..\..\..\libraries\boost\;..\..\..\BloodyMess\sdk;..\..\libs\AntTweakBar\include"
+				PreprocessorDefinitions="NXOGRE_OPTIONS_STATIC_LIBRARY;TW_STATIC"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -130,6 +132,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="NxOgreStatic.lib AntTweakBarStatic.lib"
+				AdditionalLibraryDirectories="..\..\..\BloodyMess\sdk;..\..\..\..\..\libraries\boost\lib\;..\..\libs\AntTweakBar\lib\"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -155,6 +159,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="mkdir &quot;$(SolutionDir)..\..\application&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(TargetDir)Flour.exe&quot; &quot;$(SolutionDir)..\..\application\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -165,7 +170,7 @@
 			Name="Resources"
 			>
 			<File
-				RelativePath=".\glut.rc"
+				RelativePath=".\flour.rc"
 				>
 			</File>
 			<File
@@ -177,7 +182,7 @@
 			Name="Documentation"
 			>
 			<File
-				RelativePath="..\..\source\FlourFlowerSchema.textile"
+				RelativePath="..\..\documentation\FlourFlowerSchema.textile"
 				>
 			</File>
 		</Filter>

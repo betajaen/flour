@@ -32,6 +32,8 @@
 #include <boost/filesystem.hpp>
 #include <vector>
 
+namespace N = NxOgre;
+
 FlourNxsFile::FlourNxsFile()
 : FlourFile(".nxs", "PhysX Shape File", ".flower", FlourFile::FileType_Mesh)
 {
@@ -41,76 +43,33 @@ FlourNxsFile::~FlourNxsFile()
 {
 }
 
-
 NxOgre::MeshData* FlourNxsFile::loadMesh(const std::string& path)
 {
- open(path, false);
  
- std::stringstream ari;
- ari << mWorkingArchiveName << ":" << mWorkingFileName;
-
- NxOgre::Mesh* mesh = NxOgre::MeshManager::getSingleton()->load(NxOgre::ArchiveResourceIdentifier(ari.str().c_str()));
+ // Compile ARI.
+ N::ArchiveResourceIdentifier ari = Flour::getInstance()->getARI(Flour::getInstance()->getArchive(path), path);
  
- NxOgre::MeshData* data = mesh->getMeshData();
+ // Load Mesh using ARI.
+ N::Mesh* mesh = NxOgre::MeshManager::getSingleton()->load(ari);
  
- close();
+ // Mesh to MeshData
+ N::MeshData* data = mesh->getMeshData();
  
+ // Done. 
  return data;
 }
 
-void  FlourNxsFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
+void FlourNxsFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
 {
+ 
+ // Don't do anything on bad meshdatas
  if (data == 0)
   return;
-
- open(path, false);
  
- std::cout << data->mType << "\n";
+ // Work out the ARI.
+ N::ArchiveResourceIdentifier ari = Flour::getInstance()->getARI(Flour::getInstance()->getArchive(path), path);
  
- NxOgre::ManualMesh mm;
- mm.begin(data->mType, data->mVertices.size(), data->mIndexes.size());
- 
- // Vertices
- for (unsigned int i=0;i < data->mVertices.size();i+=3)
-  mm.vertex(data->mVertices[i], data->mVertices[i+1], data->mVertices[i+2]);
- 
- // Indices
- for (unsigned int i=0;i < data->mIndexes.size();i++)
-  mm.index(data->mIndexes[i]);
- 
- // Normals
- for (unsigned int i=0;i < data->mNormals.size();i+=3)
-  mm.normal(data->mNormals[i], data->mNormals[i+1], data->mNormals[i+2]);
- 
- // TextureCoords
- for (unsigned int i=0;i < data->mTextureCoordinates.size();i+=2)
-  mm.textureCoordinate(data->mTextureCoordinates[i], data->mTextureCoordinates[i+1]);
- 
- //
- boost::filesystem::path pathname(path);
- std::string basename = pathname.filename();
- std::stringstream ari_stream;
- ari_stream << mWorkingArchiveName << ":" << basename;
-
- NxOgre::ArchiveResourceIdentifier ari(ari_stream.str().c_str());
-
- mm.endCookOnly(true, ari);
-
- close();
-}
-
-NxOgre::Mesh* FlourNxsFile::get(const std::string& path)
-{
- 
- NxOgre::Archive* archive = Flour::getInstance()->createOrGetArchive(path);
- 
- boost::filesystem::path pathname(path);
- 
- std::cout << pathname.filename().c_str() << std::endl;
- 
- NxOgre::SharedStringStream stream;
- stream << archive->getName() << ":" << pathname.filename().c_str();
- return NxOgre::MeshManager::getSingleton()->load(NxOgre::ArchiveResourceIdentifier(stream.get()));
+ // And cook it.
+ data->cook(ari);
  
 }
-

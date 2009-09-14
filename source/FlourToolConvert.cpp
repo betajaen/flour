@@ -72,9 +72,9 @@ FlourConvert::FlourConvert(ConversionType type)
  {
   mOptionsDescription.add_options()
      ("help", "Show this")
-     ("flip_normals", "Flip the normals of the mesh")
-     ("16bit_indices", "Use 16-bit indices")
-     ("hardware", "Make this a hardware mesh")
+ //    ("flip_normals", "Flip the normals of the mesh")
+ //    ("16bit_indices", "Use 16-bit indices")
+//     ("hardware", "Make this a hardware mesh")
      ("file,f", boost::program_options::value< std::vector<std::string> >(), "File(s) to process")
   ;
   
@@ -84,11 +84,25 @@ FlourConvert::FlourConvert(ConversionType type)
  {
   mOptionsDescription.add_options()
      ("help", "Show this")
-     ("flip_normals", "Flip the normals of the mesh")
-     ("16bit_indices", "Use 16-bit indices")
-     ("compute_convex", "Automatically recomputes the hull from the vertices. If this flag is not set, you must provide the entire geometry manually.")
-     ("inflate_convex", "Inflates the convex object according to skin width. Use with --compute_convex only.")
-     ("uncompress_normals", "Instructs cooking to save normals uncompressed. The cooked hull data will be larger, but will load faster.")
+//     ("flip_normals", "Flip the normals of the mesh")
+//     ("16bit_indices", "Use 16-bit indices")
+//     ("compute_convex", "Automatically recomputes the hull from the vertices. If this flag is not set, you must provide the entire geometry manually.")
+//     ("inflate_convex", "Inflates the convex object according to skin width. Use with --compute_convex only.")
+//     ("uncompress_normals", "Instructs cooking to save normals uncompressed. The cooked hull data will be larger, but will load faster.")
+     ("file,f", boost::program_options::value< std::vector<std::string> >(), "File(s) to process")
+  ;
+  
+  mPositionalOptions.add("file", -1);
+ }
+ else if (mConversionType == ConversionType_Cloth)
+ {
+  mOptionsDescription.add_options()
+     ("help", "Show this")
+//   ("flip_normals", "Flip the normals of the mesh")
+//   ("16bit_indices", "Use 16-bit indices")
+//   ("compute_convex", "Automatically recomputes the hull from the vertices. If this flag is not set, you must provide the entire geometry manually.")
+//   ("inflate_convex", "Inflates the convex object according to skin width. Use with --compute_convex only.")
+//   ("uncompress_normals", "Instructs cooking to save normals uncompressed. The cooked hull data will be larger, but will load faster.")
 
      ("file,f", boost::program_options::value< std::vector<std::string> >(), "File(s) to process")
   ;
@@ -155,8 +169,6 @@ void FlourConvert::process()
   out_file->saveMesh(boost::filesystem::path(pathname.parent_path() / out_filename).string(), mesh);
   
   std::cout << "Saved " << file << " as " << out_filename << std::endl;
-
-  NxOgre_Delete(mesh);
   
  }
   

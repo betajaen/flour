@@ -45,9 +45,11 @@ class FlourCupcake : public FlourTool, public OpenGL
   
  ~FlourCupcake();
   
-  void process();
+  void        process();
   
-  void        onFrame();
+  void        onPreFrame();
+
+  void        onPostFrame();
   
   void        onKeyEvent(char key);
   

@@ -88,7 +88,7 @@ void FlourViewer::process()
 }
 
 
-void FlourViewer::onFrame()
+void FlourViewer::onPostFrame()
 {
 }
 

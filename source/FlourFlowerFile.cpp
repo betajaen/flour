@@ -24,11 +24,16 @@
 */
 
 #include "FlourFlowerFile.h"
+#include "Flour.h"
+
+#include "NxOgre.h"
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
+
+namespace N = NxOgre;
 
 FlourFlowerFile::FlourFlowerFile()
 : FlourFile(".flower", "Flower for meshes", ".nxs", FlourFile::FileType_Mesh)
@@ -42,21 +47,45 @@ FlourFlowerFile::~FlourFlowerFile()
 
 NxOgre::MeshData* FlourFlowerFile::loadMesh(const std::string& path)
 {
- open(path, true, NxOgre::Enums::ResourceAccess_ReadOnly);
- 
- if (mWorkingResource->getStatus() != NxOgre::Enums::ResourceStatus_Opened)
- {
-  close();
-  return 0;
- }
- 
  NxOgre::MeshData* mesh = NxOgre_New(NxOgre::MeshData)();
+ FlowerToMeshData(path, mesh);
+ return mesh;
+}
+
+void  FlourFlowerFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
+{
+ if (data == 0)
+  return;
+ 
+ MeshDataToFlower(path, data);
+}
+
+void FlourFlowerFile::getLine(NxOgre::Resource* resource, NxOgre::Buffer<char>& buffer)
+{
+ buffer.clear();
+ while(1)
+ {
+  char c = resource->readChar();
+  if (resource->atEnd() || c == '\r' || c == '\n')
+   break;
+  buffer.append(c);
+ }
+ buffer.append(0);
+}
+
+void FlourFlowerFile::FlowerToMeshData(const std::string& path, NxOgre::MeshData* mesh)
+{
+ 
+ N::ArchiveResourceIdentifier ari = Flour::getInstance()->getARI(Flour::getInstance()->getArchive(path), path);
+ 
+ N::Resource* resource = N::ResourceSystem::getSingleton()->open(ari, N::Enums::ResourceAccess_ReadOnly);
  
  NxOgre::Buffer<char> buffer;
  unsigned int line = 0;
  while(1)
  {
-  getLine(buffer);
+  
+  getLine(resource, buffer);
   line++;
   if (buffer.size() == 0) // Skip empty lines.
    continue;
@@ -70,7 +99,7 @@ NxOgre::MeshData* FlourFlowerFile::loadMesh(const std::string& path)
   
   if (boost::istarts_with(buffer.first(), "vertices"))
   {
-   // vertices
+    // vertices
     // 12345678
     std::string working_string(buffer.first() + 8);
     
@@ -131,7 +160,7 @@ NxOgre::MeshData* FlourFlowerFile::loadMesh(const std::string& path)
 
    continue;
   }
-
+  
   if (boost::istarts_with(buffer.first(), "texturecoords"))
   {
    
@@ -156,133 +185,87 @@ NxOgre::MeshData* FlourFlowerFile::loadMesh(const std::string& path)
    continue;
   }
   
-  if (mWorkingResource->atEnd())
+  if (resource->atEnd())
    break;
-
+  
  } // end-while
- 
- close();
- return mesh;
- 
+  
+  
 }
 
-void  FlourFlowerFile::saveMesh(const std::string& path, NxOgre::MeshData* data)
+void FlourFlowerFile::MeshDataToFlower(const std::string& path, NxOgre::MeshData* data)
 {
- if (data == 0)
-  return;
-
- open(path, true, NxOgre::Enums::ResourceAccess_WriteOnly);
  
- NxOgre::SharedStringStream line;
+ N::ArchiveResourceIdentifier ari = Flour::getInstance()->getARI(Flour::getInstance()->getArchive(path), path);
+ 
+ N::Resource* resource = N::ResourceSystem::getSingleton()->open(ari, N::Enums::ResourceAccess_WriteOnly);
+ 
+ 
+ NxOgre::SharedStringStream flower;
  
  // Write type;
- line << "type ";
  if (data->mType == NxOgre::Enums::MeshType_Convex)
-  line << "convex";
+  flower << "type convex\n";
  else if (data->mType == NxOgre::Enums::MeshType_Triangle)
-  line << "triangle";
+  flower << "type triangle\n";
  else if (data->mType == NxOgre::Enums::MeshType_SoftBody)
-  line << "softbody";
+  flower << "type softbody\n";
  else if (data->mType == NxOgre::Enums::MeshType_Cloth)
-  line << "cloth";
- 
- writeLine(line);
+ {
+  flower << "type cloth\n";
+  flower << "weldingdistance " << data->mClothWeldingDistance << "\n";
+ }
  
  // Vertices.
  if (data->mVertices.size())
- {
-  std::stringstream ss;
-  ss << "\n# " << data->mVertices.size() / 3 << " Vertices";
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "\n# " << data->mVertices.size() / 3 << " Vertices\n";
  for (unsigned int i=0; i < data->mVertices.size(); i+=3)
- {
-  std::stringstream ss;
-  ss << "vertices " << data->mVertices[i] << ", " << data->mVertices[i+1] << ", " << data->mVertices[i+2];
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "vertices " << data->mVertices[i] << ", " << data->mVertices[i+1] << ", " << data->mVertices[i+2] << "\n";
  
  // Indices.
  if (data->mIndexes.size())
- {
-  std::stringstream ss;
-  ss << "\n# " << data->mIndexes.size() << " Indices / " << data->mIndexes.size() / 3 << " Triangles";
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "\n# " << data->mIndexes.size() << " Indices / " << data->mIndexes.size() / 3 << " Triangles\n";
  for (unsigned int i=0; i < data->mIndexes.size(); i+=3)
- {
-  std::stringstream ss;
-  ss << "indexes " << data->mIndexes[i] << ", " << data->mIndexes[i+1] << ", " << data->mIndexes[i+2];
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
-
-
+  flower << "indexes " << data->mIndexes[i] << ", " << data->mIndexes[i+1] << ", " << data->mIndexes[i+2] << "\n";
+ 
  // Normals.
  if (data->mNormals.size())
- {
-  std::stringstream ss;
-  ss << "\n# " << data->mNormals.size() / 3 << " Normals";
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "\n# " << data->mNormals.size() / 3 << " Normals\n";
  for (unsigned int i=0; i < data->mNormals.size(); i+=3)
- {
-  std::stringstream ss;
-  ss << "normals " << data->mNormals[i] << ", " << data->mNormals[i+1] << ", " << data->mNormals[i+2];
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
-
-
-
-  
+  flower << "normals " << data->mNormals[i] << ", " << data->mNormals[i+1] << ", " << data->mNormals[i+2] << "\n";
+ 
  // TextureCoords.
  if (data->mTextureCoordinates.size())
- {
-  std::stringstream ss;
-  ss << "# " << data->mTextureCoordinates.size() / 2<< " TextureCoords";
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "# " << data->mTextureCoordinates.size() / 2<< " Texture coordinates\n";
  for (unsigned int i=0; i < data->mNormals.size(); i+=2)
- {
-  std::stringstream ss;
-  ss << "texturecoords " << data->mTextureCoordinates[i] << ", " << data->mTextureCoordinates[i+1];
-  line.clear();
-  line.add(ss.str().c_str());
-  writeLine(line);
- }
+  flower << "texturecoords " << data->mTextureCoordinates[i] << ", " << data->mTextureCoordinates[i+1] << "\n";
  
- close();
+ // Tetrahedra
+ if (data->mTetrahedra.size())
+  flower << "# " << data->mTetrahedra.size() / 4 << " Tetrahedra\n";
+ for (unsigned int i=0; i < data->mTetrahedra.size(); i+=4)
+  flower << "tetrahedra " << data->mTetrahedra[i] << ", " << data->mTetrahedra[i+1] << ", " <<  data->mTetrahedra[i+2] << ", " << data->mTetrahedra[i+3] << "\n";
+ 
+ // Materials
+ if (data->mMaterials.size())
+  flower << "# " << data->mMaterials.size() << " Materials indices\n";
+ for (unsigned int i=0; i < data->mMaterials.size(); i+=3)
+  flower << "materials " << data->mMaterials[i] << ", " << data->mMaterials[i+1] << ", " << data->mMaterials[i+2] << "\n";
+ 
+ // Flags
+ if (data->mFlags.size())
+  flower << "# " << data->mFlags.size() << " Vertex flags\n";
+ for (unsigned int i=0; i < data->mFlags.size(); i+=3)
+  flower << "vertexflags " << data->mFlags[i] << ", " << data->mFlags[i+1] << ", " << data->mFlags[i+2] << "\n";
+ 
+ // Masses
+ if (data->mMasses.size())
+  flower << "# " << data->mMasses.size() << " Vertex masses\n";
+ for (unsigned int i=0; i < data->mMasses.size(); i+=3)
+  flower << "vertexmasses " << data->mMasses[i] << ", " << data->mMasses[i+1] << ", " << data->mMasses[i+2] << "\n";
+ 
+ resource->write(flower.get(), flower.length());
+ 
+ N::ResourceSystem::getSingleton()->close(resource);
 }
 
-void FlourFlowerFile::getLine(NxOgre::Buffer<char>& buffer)
-{
- buffer.clear();
- while(1)
- {
-  char c = mWorkingResource->readChar();
-  if (mWorkingResource->atEnd() || c == '\r' || c == '\n')
-   break;
-  buffer.append(c);
- }
- buffer.append(0);
-}
-
-void FlourFlowerFile::writeLine(NxOgre::SharedStringStream& line)
-{
- mWorkingResource->write(line.get(), line.length());
- mWorkingResource->writeChar('\n');
- line.clear();
-}

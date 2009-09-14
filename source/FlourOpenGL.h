@@ -29,6 +29,8 @@
 #include "FlourTool.h"
 #include "NxOgre.h"
 
+#include <AntTweakBar.h>
+
 struct                 OpenGL_Triangle
 {
  NxOgre::Vec3  a,  b, c, normal;
@@ -47,6 +49,8 @@ struct Body
   
   NxOgre::Mesh*                 mMesh;
   
+  unsigned int                  mID;
+  
   float                         mRed, mGreen, mBlue;
   
   std::vector<OpenGL_Triangle>  mTriangles;
@@ -58,6 +62,12 @@ struct Body
   void                          parse(NxOgre::MeshData*);
   
 };
+
+/////////////////////////////////////////////////////////////////////////
+
+void TW_CALL callQuitTW(void*);
+
+/////////////////////////////////////////////////////////////////////////
 
 class OpenGL
 {
@@ -93,13 +103,17 @@ class OpenGL
   
   void                startRendering();
   
-  void                orbitCamera(float yaw, float pitch, float distance);
+  void                resetBodies();
+  
+  void                orbitCamera(float& yaw, float& pitch, float& distance);
   
   void                renderOnce();
   
   void                drawGrid();
   
-  virtual void        onFrame();
+  virtual void        onPreFrame();
+  
+  virtual void        onPostFrame();
   
   virtual void        onKeyEvent(char key);
   
@@ -108,7 +122,9 @@ class OpenGL
   virtual void        onMouseButtonEvent(int ButtonID, int x, int y);
 
   void                onKeyCallback(char key);
-
+  
+  NxOgre::Actor*      getSelectedActor();
+  
  protected:
   
   NxOgre::Vec3        mCamera;
@@ -127,10 +143,13 @@ class OpenGL
   
   std::vector<unsigned int> mColours;
   
-  unsigned int              mNextColour;
-
-  Body*               mWorkingBody;
+  unsigned int        mNextColour;
+  
   unsigned int        mWorkingBodyIndex;
+  
+  TwBar*              mBar;
+  
+  unsigned            mNextBodiesID;
 };
 
 #endif

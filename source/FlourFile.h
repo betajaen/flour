@@ -52,6 +52,8 @@ class FlourFile
   
   FileType                            getType() const { return mType; }
   
+  NxOgre::ArchiveResourceIdentifier   getARI(const std::string& archive_name, const std::string& path);
+
   std::string                         createOrGetArchive(const std::string& directory);
   
   virtual NxOgre::Mesh*               get(const std::string& path);
@@ -64,10 +66,6 @@ class FlourFile
   
   virtual void                        saveHeightfield(const std::string& path, NxOgre::HeightFieldData*);
   
-  void                                open(const std::string& path, bool open_resource, NxOgre::Enums::ResourceAccess = NxOgre::Enums::ResourceAccess_ReadOnly);
-  
-  void                                close();
-  
  protected:
   
   std::string                                             mExtension;
@@ -77,12 +75,6 @@ class FlourFile
   std::string                                             mOpposite;
   
   FileType                                                mType;
-  
-  NxOgre::Resource*                                       mWorkingResource;
-  
-  std::string                                             mWorkingArchiveName;
-  
-  std::string                                             mWorkingFileName;
   
 };
 

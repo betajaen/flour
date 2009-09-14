@@ -46,11 +46,14 @@ class FlourFlowerFile : public FlourFile
   
   void                                saveMesh(const std::string& path, NxOgre::MeshData*);
   
+  
  protected:
   
-  void                                writeLine(NxOgre::SharedStringStream&);
-
-  void                                getLine(NxOgre::Buffer<char>& buffer);
+  void                                FlowerToMeshData(const std::string& path, NxOgre::MeshData*);
+  
+  void                                MeshDataToFlower(const std::string& path, NxOgre::MeshData*);
+  
+  void                                getLine(NxOgre::Resource*, NxOgre::Buffer<char>& buffer);
   
 };
 
