@@ -1,0 +1,228 @@
+	<h1>Flower Text File Schema</h1>
+
+	<h2>Abstract</h2>
+
+	<p>This document describes the file structure and allowed properties of the Flower file format for Flour.</p>
+
+	<h2>Layout</h2>
+
+	<p>Each file is text based and can be edited by a normal text editor. Encoding is a non-issue as each command and property uses characters from the lower half of the standard <span class="caps">ASCII</span> character set. A flower file has the file extension <code>.flower</code></p>
+
+	<h2>Comments</h2>
+
+	<p>Comments may take up an entire line or be placed within a line. A comment is prefixed with the <code>#</code> character. Once the <code>#</code> character is read, the rest of the line is ignored.</p>
+
+	<p>Line and inline comments may use unicode.</p>
+
+	<h2>Multiple Meshes</h2>
+
+	<p>More than one mesh may be stored in a flower file, each mesh and it&#8217;s properties may be seperated by a triple hyphen <code>---</code> to indicate the <br />start of a new mesh. Each name of the mesh takes on the file name, a period <code>.</code> and the number of times <code>---</code> is encountered.</p>
+<pre><code>type convex
+vertices -100.0,100.0,-100.0, ...
+</code>
+<code>---
+</code>
+<code>type triangle
+vertices 1,3,4 5,6,3, 3,2,1, ...
+</code></pre>
+
+	<p>Result</p>
+
+<pre><code>test.0.nxs (convex), test.1.nxs (triangle)
+</code></pre>
+
+	<h2>Numbers and Number Lists</h2>
+
+	<p>A number can be an integer or real, and be like the following;</p>
+
+	<ul>
+		<li>12</li>
+		<li>-12</li>
+		<li>12.0</li>
+		<li>-12</li>
+		<li>12E-8</li>
+		<li>-12E-8</li>
+	</ul>
+
+	<p>A list of numbers is seperated by a comma <code>,</code> character, whitespace is ignored.</p>
+<pre><code>property 1,2,3,4,5,6,7,8,9
+</code></pre>
+
+	<h2>Strings </h2>
+
+	<p>A string value may take up the entire line. The first character of the string is the first character in the value is not whitespace. The string is terminated by the last non-whitespace character in the line.</p>
+<pre><code>property I am a string.
+property        I am a string.
+</code></pre>
+
+	<h2>Flags</h2>
+
+	<p>A flag is a PhysX mesh flag to change the mesh properties or the options of the cooker. Flags are strings prefixed with a <code>+</code> character.</p>
+<pre><code>+16bit-indexes
++hardware
+</code></pre>
+
+	<h3>List of Flags;</h3>
+
+	<table>
+		<tr>
+			<th>Flag name</th>
+			<th>NxOgre Flag</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><code>+flip-normals</code></td>
+			<td>MeshConstructionsFlags_FlipNormals</td>
+			<td>Flip the normals</td>
+		</tr>
+		<tr>
+			<td><code>+16bit-indices</code></td>
+			<td>MeshConstructionsFlags_16bitIndices</td>
+			<td>Use smaller 16bit indices</td>
+		</tr>
+		<tr>
+			<td><code>+hardware</code></td>
+			<td>MeshConstructionsFlags_HardwareMesh</td>
+			<td>Simulate the mesh on hardware</td>
+		</tr>
+		<tr>
+			<td><code>+weldvertices</code></td>
+			<td>None.</td>
+			<td>Welds vertices of cloth within distance from each other.</td>
+		</tr>
+	</table>
+
+	<h2>Properties</h2>
+
+	<p>A property is a line that has a property name, some whitespace (tabs or spaces) then the value.</p>
+
+<pre><code>property_name property_value
+</code></pre>
+
+	<p>A property value may not be spanned across many lines. But some properties can be spread across many lines.</p>
+<pre><code>property_name property_value
+property_name property_value2
+</code></pre>
+
+	<p>The behavior of multiple properties is so;</p>
+
+	<ul>
+		<li>If the property accepts a range of numbers then the additional values are appended to the first, in order of lines read.</li>
+		<li>If the property accepts a single value, then the new value replaces the previous one.</li>
+	</ul>
+
+	<p>Depending on the mesh some properties may be ommitted.</p>
+
+	<ul>
+		<li>Vertices; Triangle, Convex, Cloth and SoftBodies</li>
+		<li>Indexes; Triangle, Convex (Optional), Cloth and SoftBodies</li>
+		<li>Normals; Cloth and SoftBodies</li>
+		<li>Texture Coordinates; Cloth (Optional) and SoftBodies (Optional)</li>
+		<li>Index Materials; Triangle (Optional)</li>
+		<li>Vertex Flags; Cloth (Optional) and SoftBodies (Optional)</li>
+		<li>Vertex Masses; Cloth (Optional) and SoftBodies (Optional)</li>
+	</ul>
+
+	<h2>List of Properties </h2>
+
+	<table>
+		<tr>
+			<th>Property Name</th>
+			<th>Property Description</th>
+			<th>Property type</th>
+			<th>Restriction</th>
+		</tr>
+		<tr>
+			<td>type</td>
+			<td>Type of mesh</td>
+			<td>String</td>
+			<td>'convex&#8217;, 'triangle&#8217;, 'cloth&#8217; or 'softbody&#8217;</td>
+		</tr>
+		<tr>
+			<td>position</td>
+			<td>Offset position</td>
+			<td>Real list</td>
+			<td>Offset position of the mesh, used with compound actors in a multi-flower file</td>
+		</tr>
+		<tr>
+			<td>orientation</td>
+			<td>Offset orientation</td>
+			<td>Real list</td>
+			<td>Offset orientation of the mesh, used with compound actors in a multi-flower file</td>
+		</tr>
+		<tr>
+			<td>vertices</td>
+			<td>Vertices</td>
+			<td> Real list </td>
+			<td>list count must be divisible by 3</td>
+		</tr>
+		<tr>
+			<td>indices or indexes</td>
+			<td>Indices</td>
+			<td>Integer list</td>
+			<td>list count must be divisible by 3</td>
+		</tr>
+		<tr>
+			<td>normals</td>
+			<td>Vertex Normals</td>
+			<td>Real list</td>
+			<td>list count must be divisible by 3</td>
+		</tr>
+		<tr>
+			<td>texturecoords</td>
+			<td>Texture coordinates</td>
+			<td>Real list</td>
+			<td>list count must be divisible by 2</td>
+		</tr>
+		<tr>
+			<td>materials</td>
+			<td>Material indexes</td>
+			<td>Integer list</td>
+			<td>list count must be divisible by 3</td>
+		</tr>
+		<tr>
+			<td>vertexflags</td>
+			<td>Vertex flags</td>
+			<td>Integer list</td>
+			<td>list count must be vertices size</td>
+		</tr>
+		<tr>
+			<td>vertexmasses</td>
+			<td>Vertex masses</td>
+			<td>Real list</td>
+			<td>list count must be vertices size</td>
+		</tr>
+		<tr>
+			<td>weldingdistance</td>
+			<td>Welding distance for cloth/softbodies</td>
+			<td>Real</td>
+			<td>Used with the weld vertices flag</td>
+		</tr>
+	</table>
+
+	<h2>Example &#8220;cube.flower&#8221; file</h2>
+<pre><code># Cube
+type convex
+vertices -100.0,100.0,-100.0    #0
+vertices 100.0,100.0,-100.0     #1
+vertices 100.0,-100.0,-100.0    #2
+vertices -100.0,-100.0,-100.0   #3
+vertices -100.0,100.0,100.0     #4
+vertices 100.0,100.0,100.0      #5
+vertices 100.0,-100.0,100.0     #6
+vertices -100.0,-100.0,100.0    #7
+</code>
+<code>indexes 0,2,3 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7,3, 2,6,7
+</code></pre>
+
+	<p></p>
+
+	<h2>Future</h2>
+
+	<p>Future extensions to the flower file format may be the following;</p>
+
+	<ul>
+		<li><span class="caps">CCD</span> Skeletons; as per development with NxOgre.</li>
+	</ul>
+
+	<p><b>Version</b>: 0.2, <b>Last modified</b>; 21-Sept-2009, <b>Authors:</b> Robin Southern</p>
