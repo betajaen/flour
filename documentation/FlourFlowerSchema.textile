@@ -10,26 +10,7 @@ p. Each file is text based and can be edited by a normal text editor. Encoding i
  
 h2. Comments
 
-p. Comments may take up an entire line or be placed within a line. A comment is prefixed with the @#@ character. Once the @#@ character is read, the rest of the line is ignored.
-
-p. Line and inline comments may use unicode.
-
-h2. Multiple Meshes
-
-More than one mesh may be stored in a flower file, each mesh and it's properties may be seperated by a triple hyphen @---@ to indicate the 
-start of a new mesh. Each name of the mesh takes on the file name, a period @.@ and the number of times @---@ is encountered.
-
-bc.. type convex
-vertices -100.0,100.0,-100.0, ...
-
----
-
-type triangle
-vertices 1,3,4 5,6,3, 3,2,1, ...
-
-p. Result
-
-bc. test.0.nxs (convex), test.1.nxs (triangle)
+p. Comments may take up an entire line or be placed within a line. A comment is prefixed with the @#@ character. Once the @#@ character is read, the rest of the line is ignored. Line and inline comments may use unicode.
 
 h2. Numbers and Number Lists
 
@@ -62,7 +43,6 @@ bc.. +16bit-indexes
 
 h3. List of Flags;
 
-
 |_. Flag name|_. NxOgre Flag|_. Description|
 |@+flip-normals@|MeshConstructionsFlags_FlipNormals|Flip the normals|
 |@+16bit-indices@|MeshConstructionsFlags_16bitIndices|Use smaller 16bit indices|
@@ -82,7 +62,7 @@ property_name property_value2
 
 p. The behavior of multiple properties is so;
 
-* If the property accepts a range of numbers then the additional values are appended to the first, in order of lines read.
+* If the property accepts a range of numbers then any additional values are appended.
 * If the property accepts a single value, then the new value replaces the previous one.
 
 p. Depending on the mesh some properties may be ommitted.
@@ -98,14 +78,12 @@ p. Depending on the mesh some properties may be ommitted.
 h2. List of Properties 
 
 |_. Property Name|_. Property Description|_. Property type|_. Restriction|
-|type|Type of mesh|String|'convex', 'triangle', 'cloth' or 'softbody'|
-|position|Offset position|Real list|Offset position of the mesh, used with compound actors in a multi-flower file|
-|orientation|Offset orientation|Real list|Offset orientation of the mesh, used with compound actors in a multi-flower file|
+|type|Type of mesh|String|'convex', 'triangle', 'cloth', 'softbody' or 'skeleton'|
 |vertices|Vertices| Real list |list count must be divisible by 3|
 |indices or indexes|Indices|Integer list|list count must be divisible by 3|
-|normals|Vertex Normals|Real list|list count must be divisible by 3|
-|texturecoords|Texture coordinates|Real list|list count must be divisible by 2|
-|materials|Material indexes|Integer list|list count must be divisible by 3|
+|normals|Vertex Normals|Real list|list count must be vertices size|
+|texturecoords|Texture coordinates|Real list|list count must be vertices size|
+|materials|Material indexes|Integer list|list count must be vertices size|
 |vertexflags|Vertex flags|Integer list|list count must be vertices size|
 |vertexmasses|Vertex masses|Real list|list count must be vertices size|
 |weldingdistance|Welding distance for cloth/softbodies|Real|Used with the weld vertices flag|
@@ -123,7 +101,7 @@ vertices 100.0,100.0,100.0      #5
 vertices 100.0,-100.0,100.0     #6
 vertices -100.0,-100.0,100.0    #7
 
-indexes 0,2,3 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7,3, 2,6,7
+indexes 0,2,3, 0,1,2, 1,6,2, 1,5,6, 4,6,5, 4,7,6, 0,7,4, 0,3,7, 0,5,1, 0,4,5, 2,7,3, 2,6,7
 
 p. 
 
@@ -131,6 +109,6 @@ h2. Future
 
 p. Future extensions to the flower file format may be the following;
 
-* CCD Skeletons; as per development with NxOgre.
+* Support for multiple meshes
 
-p. **Version**: 0.2, **Last modified**; 21-Sept-2009, **Authors:** Robin Southern
+p. **Version**: 0.25, **Last modified**; 03-June-2010, **Authors:** Robin Southern
