@@ -76,7 +76,7 @@ NxOgre::World* Flour::getWorld()
 
 std::string Flour::getVersion() const
 {
- return "Flour 0.4.7";
+ return "Flour 0.4.8";
 }
 
 void Flour::registerTool(const std::string& name, Tool* tool)

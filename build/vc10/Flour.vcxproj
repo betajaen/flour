@@ -56,17 +56,17 @@
       <Command>..\VC.prebuild.bat Flour Final</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\source;..\..\libs\AntTweakbar\include;$(NXOGRE_DIR)\sdk;$(BOOST_HOME)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source;$(NXOGRE_DIR)\sdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>NxOgreStatic.lib;AntTweakBarStatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)FlourFinal.exe</OutputFile>
-      <AdditionalLibraryDirectories>$(NXOGRE_DIR)\SDKs;..\..\libs\AntTweakbar\lib\release;$(BOOST_HOME)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>NxOgre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)Flour.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(NXOGRE_DIR)\SDK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>..\VC.postbuild.bat Flour Final</Command>
+      <Command>..\VC.postbuild.final.bat Flour Final</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -74,7 +74,7 @@
       <Command>..\VC.prebuild.bat Flour Debug</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\source;..\..\libs\AntTweakbar\include;$(NXOGRE_DIR)\sdk;$(BOOST_HOME)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source;$(NXOGRE_DIR)\sdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -83,7 +83,7 @@
     <Link>
       <AdditionalDependencies>NxOgreDebug.lib;AntTweakBarStatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)FlourDebug.exe</OutputFile>
-      <AdditionalLibraryDirectories>$(NXOGRE_DIR)\SDK;..\..\libs\AntTweakbar\lib\;$(BOOST_HOME)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(NXOGRE_DIR)\SDK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
     </Link>

@@ -71,8 +71,9 @@ class ToolDisassemble : public Tool
     
     puts << ">> Dissassembled " << (*it) << " into " << path << "\n";
     
+    delete meshData;
    }
-
+   
    return true;
   }
   

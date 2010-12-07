@@ -103,13 +103,14 @@ class ToolConvert : public Tool
     else
     {
      puts << "Unknown mesh type given in the flower file. To override or choose your own do: \n";
-     puts << "  flour convert --type=convex " << (*it) << "\n";
+     puts << ">  flour convert --type=convex " << (*it) << "\n";
      return false;
     }
     
     meshData->cook("file://" + path);
     puts << ">> Converted " << (*it) << " into " << path << "\n";
     
+    delete meshData;
    }
 
    return true;
